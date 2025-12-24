@@ -6,10 +6,12 @@ Handles the business logic: loading data, randomization, scoring, and logging.
 import json
 import random
 import time
+from datetime import datetime
 from pathlib import Path
 
 from loguru import logger
 
+from quiz_app import config  # Import config to access REPORTS_DIR
 from quiz_app.models.question import Question
 from quiz_app.models.user_answer import UserAnswer
 
@@ -123,3 +125,48 @@ class QuizEngine:
 
         logger.info(f"Quiz finished. Score: {correct}/{total} ({percentage:.2f}%)")
         return correct, total, percentage
+
+    def save_report(self) -> Path:
+        """Generates a Markdown study guide of the session.
+
+        Returns:
+            Path: The file path of the saved report.
+        """
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"quiz_report_{timestamp}.md"
+        filepath = config.REPORTS_DIR / filename
+
+        correct, total, percent = self.calculate_score()
+
+        with open(filepath, "w", encoding="utf-8") as f:
+            # Header
+            f.write("# Quiz Session Report\n")
+            f.write(f"**Date:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            f.write(f"**Final Score:** {correct}/{total} ({percent:.2f}%)\n\n")
+            f.write("---\n\n")
+
+            # Questions
+            for idx, ans in enumerate(self.user_answers, 1):
+                q = ans.question
+
+                # Determine icon
+                status_icon = "✅ Correct" if ans.is_correct else "❌ Incorrect"
+
+                f.write(f"## Question {idx} (ID: {q.id})\n\n")
+                f.write(f"{q.text}\n\n")
+
+                f.write("### Options:\n")
+                for key, value in q.options.items():
+                    # Highlight correct answers in bold in the list
+                    marker = ""
+                    if key in q.correct_answers:
+                        marker = " **(Correct Answer)**"
+                    f.write(f"- **{key})** {value}{marker}\n")
+
+                f.write("\n")
+                f.write(f"**Your Answer:** {', '.join(ans.selected_options)}\n")
+                f.write(f"**Result:** {status_icon}\n\n")
+                f.write("---\n\n")
+
+        logger.info(f"Study report saved to {filepath}")
+        return filepath

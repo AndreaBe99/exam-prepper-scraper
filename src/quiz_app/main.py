@@ -71,6 +71,14 @@ def main() -> None:
     stats = engine.calculate_score()
     ui.show_results(stats, engine.user_answers)
 
+    # 6. Save Study Guide
+    try:
+        report_path = engine.save_report()
+        ui.console.print(f"\n[bold green]📝 Study guide saved to:[/bold green] [underline]{report_path}[/underline]")
+    except Exception as e:
+        logger.error(f"Failed to save report: {e}")
+        ui.console.print(f"\n[bold red]Failed to save study guide:[/bold red] {e}")
+
 
 if __name__ == "__main__":
     main()

@@ -75,8 +75,22 @@ class QuizUI:
         self.console.print(Panel(Markdown(question.text), title=f"ID: {question.id}", border_style="cyan"))
         self.console.print("")
 
-        # Prepare choices for Questionary
-        choices = [questionary.Choice(title=f"{k}) {v}", value=k) for k, v in question.options.items()]
+        # Display Options via Rich Table (Handles wrapping for long text)
+        # We use a grid table to align "A)" with the text, allowing the text to wrap nicely.
+        grid = Table.grid(expand=True, padding=(0, 1))
+        grid.add_column(style="yellow bold", width=4)  # Key column (e.g. "A)")
+        grid.add_column(style="white")  # Text column
+
+        for k, v in question.options.items():
+            grid.add_row(f"{k})", v)
+            grid.add_row("", "")  # Empty row for spacing between options
+
+        self.console.print(grid)
+        self.console.print("")
+        # -------------------------------------------------------------------------
+
+        # Prepare simple choices for Questionary (just the keys)
+        choices = [questionary.Choice(title=f"Option {k}", value=k) for k in question.options.keys()]
 
         # Use Checkbox for multiple choice, Select list for single choice
         if question.is_multiple_choice:
@@ -88,12 +102,14 @@ class QuizUI:
                 "Select your answer(s):",
                 choices=choices,
                 style=questionary.Style([("answer", "fg:cyan bold")]),
+                qmark="👉",
             ).ask()
         else:
             answer = questionary.select(
                 "Select your answer:",
                 choices=choices,
                 style=questionary.Style([("answer", "fg:cyan bold")]),
+                qmark="👉",
             ).ask()
             # Wrap single result in list for consistency
             if answer:
