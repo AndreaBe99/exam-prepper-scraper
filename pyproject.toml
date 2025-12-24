@@ -1,0 +1,129 @@
+[project]
+name = "gcp-exam-scraper"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "loguru>=0.7.3",
+    "python-dotenv>=1.2.1",
+    "pyyaml>=6.0.3",
+    "questionary>=2.1.1",
+    "rich>=14.2.0",
+    "selenium>=4.39.0",
+    "setuptools>=80.9.0",
+    "undetected-chromedriver>=3.5.5",
+    "webdriver-manager>=4.0.2",
+]
+
+[tool.uv]
+package = true
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+
+[tool.ruff]
+src = ["scripts", "src", "tests"]
+line-length = 120
+# Enable auto fix
+fix = true
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    "*.ipynb",
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "__pycache__",
+    "docs/source/conf.py",
+    "bin",
+    "lib",
+]
+#per-file-ignores = {}
+
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "ANN401", # Dynamically typed expressions (typing.Any) are disallowed
+    "BLE001", # Do not catch blind exception: `Exception`
+    # "C901",   # `` is too complex (x > 10)
+    "COM812", # Trailing comma missing
+    "D100",   # Missing docstring in public module
+    # "D101",   # Missing docstring in public class
+    # "D102",   # Missing docstring in public method
+    "D104", # Missing docstring in public package
+    "D106", # Missing docstring in public nested class
+    "D107", # Missing docstring in __init__
+    "D205",   # 1 blank line required between summary line and description
+    "D410",   # Missing blank line after section ("Args")
+    "D411",   # Missing blank line before section ("Returns")
+    "DTZ005",  # `datetime.datetime.now()` called without a `tz` argument
+    "EM101",   # Exception must not use a string literal, assign to variable first
+    "EM102",   # Exception must not use an f-string literal, assign to variable first
+    "ERA001",  # Found commented-out code
+    "FBT001",  # Boolean-typed positional argument in function definition
+    "FBT002",  # Boolean default positional argument in function definition
+    # "FIX002",  # Line contains TODO, consider resolving the issue
+    "PLR0913", # Too many arguments in function definition (x > 5)
+    "PLR0915", # Too many statements (x > 50)
+    "PT018",   # Assertion should be broken down into multiple parts
+    # "RUF001",  # String contains ambiguous `–` (EN DASH). Did you mean `-` (HYPHEN-MINUS)?
+    "RUF012",  # Mutable class attributes should be annotated with `typing.ClassVar`
+    "S101",    # Use of `assert` detected
+    "S105",    # Possible hardcoded password assigned to: ""
+    "S608",    # Possible SQL injection vector through string-based query construction
+    # "T201",    # `print` found
+    # "T203",    # `pprint` found
+    "TD003",   # Missing issue link for this TODO
+    "TRY003",  # Avoid specifying long messages outside the exception class
+    "PLC0415", # import-outside-top-level
+    "TID252",  # relative-imports,
+    "ANN204",  # Missing return type annotation for special method `__init__`
+    "SIM105",  # Use `contextlib.suppress(Exception)` instead of `try`-`except`-`pass`
+    "G004",    # Logging statement uses f-string
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src", "tests"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 18
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+    "S101", # Use of `assert` detected
+    "S105",
+    "S106", # todo: Possible hardcoded password: ...
+    "D102",
+    "D107",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+docstring-code-line-length = 120
