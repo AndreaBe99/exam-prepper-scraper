@@ -18,12 +18,17 @@ What should they do?
 
 > **Correct Answer:** D
 
+**Spiegazione:** 
+* **A)** Un nuovo load balancer richiederebbe **DNS e/o SSL diversi**, andando contro il requisito di mantenerli invariati.
+* **B)** Riconfigurare i client rompe la **retro-compatibilità** e impatta gli utenti esistenti.
+* **C)** Far forwardare la vecchia API crea **accoppiamento tra versioni**, complica deploy e manutenzione ed è un anti-pattern.
+* **D)** *Corretta*: Perché consente di mantenere **lo stesso DNS e certificato SSL** usando un **unico load balancer** che instrada le richieste verso **backend diversi in base al path** (es. `/v1` e `/v2`), permettendo di tenere attiva la vecchia API e testare la nuova **in parallelo e senza modifiche ai client**.
+
+
 ---
 ### Question 2
 
-You write a Python script to connect to Google BigQuery from a Google Compute Engine virtual machine. The script is printing errors that it cannot connect to
-
-BigQuery.
+You write a Python script to connect to Google BigQuery from a Google Compute Engine virtual machine. The script is printing errors that it cannot connect to BigQuery.
 
 What should you do to fix the script?
 
@@ -33,6 +38,13 @@ What should you do to fix the script?
 - D) Install the bq component for gcloud with the command gcloud components install bq.
 
 > **Correct Answer:** C
+
+**Spiegazione:**
+* **A)** Installare la libreria client non risolve errori di **autenticazione/autorizzazione** se la VM non ha credenziali valide per BigQuery.
+* **B)** Lo scope BigQuery è necessario, ma creare una nuova VM non è richiesto se il problema è l’**identità usata dallo script**.
+* **C)** *Corretta*: Perché BigQuery richiede un **service account con i permessi appropriati**, e lo script deve essere eseguito usando credenziali che abbiano accesso esplicito a BigQuery.
+* **D)** Il componente `bq` serve solo per l’uso della **CLI gcloud**, non per l’accesso di uno script Python alle API.
+
 
 ---
 ### Question 3
@@ -46,6 +58,13 @@ You need to ensure reliability for your application and operations by supporting
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A)** Pubblicare direttamente verso Compute Engine crea **accoppiamento stretto** e riduce affidabilità in caso di errori o downtime del servizio consumer.
+* **B)** *Corretta*: App Engine Cron + **Cloud Pub/Sub** disaccoppia scheduling ed elaborazione, garantendo **affidabilità, retry automatici e scalabilità**, in linea con le best practice GCP.
+* **C)** Il Cron di GKE aggiunge **complessità operativa non necessaria** per un semplice task di scheduling e non migliora l’affidabilità.
+* **D)** Anche se Pub/Sub è corretto, usare GKE Cron è **overkill** rispetto ad App Engine Cron, che è più semplice e gestito per task pianificati.
+
 ---
 ### Question 4
 
@@ -53,12 +72,19 @@ Your company is building a new architecture to support its data-centric business
 
 What actions will meet your company's needs?
 
-- A) Compress and upload both archived files and files uploaded daily using the gsutil ג€"m option.
+- A) Compress and upload both archived files and files uploaded daily using the gsutil -m option.
 - B) Lease a Transfer Appliance, upload archived files to it, and send it to Google to transfer archived data to Cloud Storage. Establish a connection with Google using a Dedicated Interconnect or Direct Peering connection and use it to upload files daily.
-- C) Lease a Transfer Appliance, upload archived files to it, and send it to Google to transfer archived data to Cloud Storage. Establish one Cloud VPN Tunnel to VPC networks over the public internet, and compress and upload files daily using the gsutil ג€"m option.
+- C) Lease a Transfer Appliance, upload archived files to it, and send it to Google to transfer archived data to Cloud Storage. Establish one Cloud VPN Tunnel to VPC networks over the public internet, and compress and upload files daily using the gsutil -m option.
 - D) Lease a Transfer Appliance, upload archived files to it, and send it to Google to transfer archived data to Cloud Storage. Establish a Cloud VPN Tunnel to VPC networks over the public internet, and compress and upload files daily.
 
 > **Correct Answer:** B
+
+**Spiegazione:**
+
+* **A)** Una connessione internet da **100 MB** è insufficiente per trasferire **900 TB** iniziali e **10 TB/giorno**, anche con compressione e parallelismo.
+* **B)** *Corretta*: La **Transfer Appliance** è ideale per il bulk iniziale di grandi volumi di dati, mentre **Dedicated Interconnect o Direct Peering** garantiscono **banda elevata, affidabilità e costanza** per i trasferimenti giornalieri.
+* **C)** Una **Cloud VPN** sul pubblico internet non offre **throughput sufficiente né stabilità** per carichi giornalieri di 10 TB.
+* **D)** Anche senza `gsutil -m`, la **VPN su internet** resta un collo di bottiglia e non soddisfa i requisiti di scala e affidabilità.
 
 ---
 ### Question 5
@@ -74,12 +100,17 @@ Which products should you deploy to ensure guaranteed-once FIFO (first-in, first
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A)** Cloud Pub/Sub da solo non garantisce **ordinamento FIFO perfetto** né elaborazione “guaranteed-once” a livello applicativo.
+* **B)** *Corretta*: Combinando **Cloud Pub/Sub con Cloud Dataflow** puoi ottenere **processing exactly-once e mantenere l’ordine dei messaggi**, rispettando i requisiti di elaborazione cronologica e senza duplicati.
+* **C)** Inviare dati a Stackdriver serve solo per **monitoraggio e logging**, non per elaborazione affidabile dei messaggi.
+* **D)** Cloud SQL può archiviare i dati, ma **non garantisce l’ordine FIFO** né l’elaborazione exactly-once come Dataflow.
+
 ---
 ### Question 6
 
-Your company is planning to perform a lift and shift migration of their Linux RHEL 6.5+ virtual machines. The virtual machines are running in an on-premises
-
-VMware environment. You want to migrate them to Compute Engine following Google-recommended practices. What should you do?
+Your company is planning to perform a lift and shift migration of their Linux RHEL 6.5+ virtual machines. The virtual machines are running in an on-premises VMware environment. You want to migrate them to Compute Engine following Google-recommended practices. What should you do?
 
 - A) 1. Define a migration plan based on the list of the applications and their dependencies. 2. Migrate all virtual machines into Compute Engine individually with Migrate for Compute Engine.
 - B) 1. Perform an assessment of virtual machines running in the current VMware environment. 2. Create images of all disks. Import disks on Compute Engine. 3. Create standard virtual machines where the boot disks are the ones you have imported.
@@ -87,6 +118,14 @@ VMware environment. You want to migrate them to Compute Engine following Google-
 - D) 1. Perform an assessment of virtual machines running in the current VMware environment. 2. Install a third-party agent on all selected virtual machines. 3. Migrate all virtual machines into Compute Engine.
 
 > **Correct Answer:** C
+
+**Spiegazione:**
+
+* **A)** Definire solo un piano e migrare le VM individualmente **non segue le best practice Google**, perché manca una fase di assessment dettagliata e un RunBook strutturato.
+* **B)** Importare manualmente i dischi è **più complesso e soggetto a errori**, non sfrutta gli strumenti consigliati da Google per una migrazione lift-and-shift.
+* **C)** *Corretta*: Perché include **assessment**, **pianificazione** e l’uso di **Migrate for Compute Engine con un RunBook**, seguendo le best practice Google per migrazione lift-and-shift affidabile e scalabile.
+* **D)** Usare un agente di terze parti non è necessario e può **aumentare il rischio di problemi**, mentre Migrate for Compute Engine gestisce automaticamente la migrazione.
+
 
 ---
 ### Question 7
@@ -100,6 +139,13 @@ You need to deploy an application to Google Cloud. The application receives traf
 
 > **Correct Answer:** D
 
+**Spiegazione:**
+
+* **A)** Errata. Il traffico dell'applicazione è di tipo **TCP**, mentre l'HTTP Load Balancer opera a Layer 7. Inoltre, l'applicazione non scala orizzontalmente e richiede il controllo esclusivo del filesystem; Cloud Filestore (NFS) permette accessi concorrenti che, secondo i requisiti, causerebbero corruzione dei dati.
+* **B)** Errata. Sebbene il Network Load Balancer gestisca correttamente il traffico TCP, l'uso di un Managed Instance Group (MIG) con istanze in più zone implica una scalabilità orizzontale o una ridondanza attiva che l'applicazione non supporta. L'uso di Cloud Filestore espone nuovamente al rischio di corruzione per accessi simultanei.
+* **C)** Errata. L'applicazione riceve traffico TCP, rendendo l'HTTP Load Balancer uno strumento inadeguato. Sebbene il **Regional Persistent Disk** sia corretto per la replica dei dati tra due zone, il bilanciatore di carico scelto non è compatibile con il protocollo richiesto.
+* **D)** **Corretta:** Questa architettura risponde a tutti i vincoli. Un **Network Load Balancer** gestisce correttamente il traffico **TCP**. L'uso di un **Unmanaged Instance Group** con una configurazione active/standby rispetta l'incapacità dell'app di scalare orizzontalmente. Il **Regional Persistent Disk (repd)** garantisce la replica sincrona dei dati su due zone diverse; in caso di failover, il disco può essere montato forzatamente (`--force-attach`) sull'istanza di standby, garantendo che solo un processo alla volta abbia il controllo del filesystem, prevenendo la corruzione.
+
 ---
 ### Question 8
 
@@ -111,6 +157,14 @@ Your company has an application running on multiple Compute Engine instances. Yo
 - D) Configure a Cloud Dedicated Interconnect connection between the on-premises environment and Google Cloud.
 
 > **Correct Answer:** D
+
+**Spiegazione:**
+
+* **A)** Errata. OpenVPN è una soluzione software che transita sulla rete internet pubblica. Non può garantire l'alto throughput e la bassa latenza richiesti per una comunicazione critica tra data center e Google Cloud.
+* **B)** Errata. Il Peering (sia Direct che Carrier) consente di accedere ai servizi Google (come Google Workspace o API pubbliche) tramite la rete di Google, ma non fornisce un accesso diretto tramite IP privati alle risorse all'interno di un VPC (Virtual Private Cloud).
+* **C)** Errata. Sebbene Cloud VPN permetta la comunicazione tramite IP interni, la larghezza di banda è limitata dalla velocità del tunnel (solitamente  Gbps per tunnel) e la connessione è soggetta alla variabilità della latenza della rete internet pubblica. Non è la scelta ottimale per requisiti di "high throughput" costante.
+* **D)** **Corretta:** **Cloud Dedicated Interconnect** fornisce una connessione fisica diretta tra la rete on-premises e la rete di Google. È la soluzione che offre la massima larghezza di banda (circuiti da  Gbps o  Gbps) e la latenza più bassa e costante possibile, poiché non attraversa la rete internet pubblica. Supporta nativamente il routing verso indirizzi IP interni tramite un Cloud Router.
+
 
 ---
 ### Question 9
@@ -124,6 +178,14 @@ You are managing an application deployed on Cloud Run for Anthos, and you need t
 
 > **Correct Answer:** A
 
+**Spiegazione:**
+
+* **A)** **Corretta:** Cloud Run (inclusa la versione per Anthos/Knative) gestisce nativamente il **Traffic Splitting**. Ogni volta che distribuisci una modifica, viene creata una nuova **Revisione**. Google Cloud consente di dividere il traffico tra più revisioni specificando le percentuali esatte (es. 5% alla nuova versione, 95% alla precedente), il che è perfetto per il requisito di valutare il nuovo codice con un subset di traffico di produzione (Canary Deployment).
+* **B)** Errata. Creare un nuovo servizio separato complicherebbe inutilmente l'architettura. Cloud Run è progettato per gestire più versioni (revisioni) all'interno dello *stesso* servizio. Inoltre, l'uso di un Cloud Load Balancer per dividere il traffico tra due servizi Cloud Run distinti è meno efficiente e più oneroso da configurare rispetto al Traffic Splitting nativo.
+* **C)** Errata. Sebbene Cloud Build possa automatizzare i deployment, `TRAFFIC_PERCENTAGE` non è una variabile di sostituzione standard di Cloud Build che controlla nativamente il rollout di Cloud Run. La gestione del traffico avviene a livello di configurazione del servizio Cloud Run (YAML o comando `gcloud run services update-traffic`), non tramite variabili arbitrarie nel trigger di build.
+* **D)** Errata. **Traffic Director** è un piano di controllo per service mesh (istio/gRPC) e solitamente viene utilizzato per gestire configurazioni di rete complesse tra microservizi su GKE o VM. Utilizzarlo per un semplice split del traffico su Cloud Run è eccessivamente complesso e non è il metodo standard o raccomandato per questa piattaforma, che ha già funzionalità integrate per il traffico.
+
+
 ---
 ### Question 10
 
@@ -135,6 +197,14 @@ You are monitoring Google Kubernetes Engine (GKE) clusters in a Cloud Monitoring
 - D) Create a custom dashboard in the Cloud Monitoring workspace for each incident, and then add metrics and create alert policies.
 
 > **Correct Answer:** A
+
+**Spiegazione:**
+
+* **A)** **Corretta:** Cloud Monitoring fornisce **dashboard predefinite** specificamente progettate per GKE che offrono visibilità immediata su nodi, pod e container senza configurazioni manuali. Per un SRE, utilizzare queste dashboard è il modo più rapido per il triage. L'aggiunta di metriche specifiche e la creazione di **alert policies** direttamente nell'ecosistema Google Cloud permette di automatizzare il rilevamento di anomalie future, mantenendo l'operatività centralizzata.
+* **B)** Errata. L'installazione di software di monitoraggio esterno su una istanza Compute Engine aggiunge un carico operativo inutile (gestione di patch, uptime e scalabilità del software stesso). Cloud Monitoring è una soluzione nativa gestita che elimina questa necessità.
+* **C)** Errata. Questa soluzione è eccessivamente complessa e lenta per il triage degli incidenti. Sebbene utile per analisi storiche a lungo termine, il passaggio attraverso Pub/Sub, BigQuery e Data Studio introduce una latenza significativa che impedisce una risposta rapida (real-time) necessaria in ambito SRE.
+* **D)** Errata. Creare una dashboard personalizzata *per ogni singolo incidente* è inefficiente e rallenta drasticamente il processo di triage. L'obiettivo durante un incidente è ridurre il Mean Time To Repair (MTTR) utilizzando strumenti già pronti, non configurare nuove infrastrutture di visualizzazione.
+
 
 ---
 ### Question 11
@@ -148,6 +218,16 @@ You are implementing a single Cloud SQL MySQL second-generation database that co
 - E) Semisynchronous replication
 
 > **Correct Answer:** C, D
+
+
+**Spiegazione:**
+
+* **A)** Errata. Lo **sharding** è una tecnica di partizionamento dei dati su più database per migliorare la scalabilità orizzontale. Non è una funzionalità nativa di "protezione dati" per Cloud SQL MySQL e non previene la perdita di dati in caso di guasto.
+* **B)** Errata. Le **Read replicas** vengono utilizzate principalmente per scalare il traffico di lettura. Sebbene possano essere promosse a istanza primaria, la replica asincrona standard di MySQL potrebbe non garantire l'assenza di perdita di dati (RPO zero) e non sostituiscono una strategia di recupero da guasti catastrofici.
+* **C)** **Corretta:** Il **Binary logging** registra tutte le modifiche ai dati (transazioni). In caso di guasto catastrofico, i log binari sono indispensabili per il **Point-in-Time Recovery (PITR)**, permettendo di ripristinare il database a un istante specifico, riducendo al minimo la perdita di dati tra un backup e l'altro.
+* **D)** **Corretta:** Gli **Automated backups** sono fondamentali per il disaster recovery. Cloud SQL esegue backup regolari che permettono di ripristinare l'istanza allo stato precedente in caso di corruzione dei dati o eliminazione accidentale. Insieme ai log binari, formano la spina dorsale della protezione dati.
+* **E)** Errata. Sebbene la replica semiasincrona possa ridurre il rischio di perdita di dati garantendo che almeno una replica abbia ricevuto la transazione, non è una "feature" configurabile direttamente per mitigare un "catastrophic failure" (come la corruzione totale dei dati) con l'efficacia combinata di backup e PITR. Inoltre, la domanda specifica un'istanza "single", rendendo i backup e i log lo strumento primario di resilienza.
+
 
 ---
 ### Question 12
@@ -886,9 +966,9 @@ The application reliability team at your company this added a debug feature to t
 
 Which process should you implement?
 
-- A) ג€¢ Append metadata to file body ג€¢ Compress individual files ג€¢ Name files with serverName ג€" Timestamp ג€¢ Create a new bucket if bucket is older than 1 hour and save individual files to the new bucket. Otherwise, save files to existing bucket.
-- B) ג€¢ Batch every 10,000 events with a single manifest file for metadata ג€¢ Compress event files and manifest file into a single archive file ג€¢ Name files using serverName ג€" EventSequence ג€¢ Create a new bucket if bucket is older than 1 day and save the single archive file to the new bucket. Otherwise, save the single archive file to existing bucket.
-- C) ג€¢ Compress individual files ג€¢ Name files with serverName ג€" EventSequence ג€¢ Save files to one bucket ג€¢ Set custom metadata headers for each object after saving
+- A) ג€¢ Append metadata to file body ג€¢ Compress individual files ג€¢ Name files with serverName - Timestamp ג€¢ Create a new bucket if bucket is older than 1 hour and save individual files to the new bucket. Otherwise, save files to existing bucket.
+- B) ג€¢ Batch every 10,000 events with a single manifest file for metadata ג€¢ Compress event files and manifest file into a single archive file ג€¢ Name files using serverName - EventSequence ג€¢ Create a new bucket if bucket is older than 1 day and save the single archive file to the new bucket. Otherwise, save the single archive file to existing bucket.
+- C) ג€¢ Compress individual files ג€¢ Name files with serverName - EventSequence ג€¢ Save files to one bucket ג€¢ Set custom metadata headers for each object after saving
 - D) ג€¢ Append metadata to file body ג€¢ Compress individual files ג€¢ Name files with a random prefix pattern ג€¢ Save files to one bucket
 
 > **Correct Answer:** D
@@ -989,7 +1069,7 @@ You want to enable your running Google Kubernetes Engine cluster to scale as dem
 
 What should you do?
 
-- A) Add additional nodes to your Kubernetes Engine cluster using the following command: gcloud container clusters resize CLUSTER_Name ג€" -size 10
+- A) Add additional nodes to your Kubernetes Engine cluster using the following command: gcloud container clusters resize CLUSTER_Name - -size 10
 - B) Add a tag to the instances in the cluster with the following command: gcloud compute instances add-tags INSTANCE - -tags enable- autoscaling max-nodes-10
 - C) Update the existing Kubernetes Engine cluster with the following command: gcloud alpha container clusters update mycluster - -enable- autoscaling - -min-nodes=1 - -max-nodes=10
 - D) Create a new Kubernetes Engine cluster with the following command: gcloud alpha container clusters create mycluster - -enable- autoscaling - -min-nodes=1 - -max-nodes=10 and redeploy your application
@@ -1034,8 +1114,8 @@ What should you do?
 
 - A) Write a lifecycle management rule in XML and push it to the bucket with gsutil
 - B) Write a lifecycle management rule in JSON and push it to the bucket with gsutil
-- C) Schedule a cron script using gsutil ls ג€"lr gs://backups/** to find and remove items older than 90 days
-- D) Schedule a cron script using gsutil ls ג€"l gs://backups/** to find and remove items older than 90 days and schedule it with cron
+- C) Schedule a cron script using gsutil ls -lr gs://backups/** to find and remove items older than 90 days
+- D) Schedule a cron script using gsutil ls -l gs://backups/** to find and remove items older than 90 days and schedule it with cron
 
 > **Correct Answer:** B
 
@@ -2057,8 +2137,8 @@ You have an application deployed on Google Kubernetes Engine using a Deployment 
 
 - A) Use kubectl set image deployment/echo-deployment <new-image>
 - B) Use the rolling update functionality of the Instance Group behind the Kubernetes cluster
-- C) Update the deployment yaml file with the new container image. Use kubectl delete deployment/echo-deployment and kubectl create ג€"f <yaml-file>
-- D) Update the service yaml file which the new container image. Use kubectl delete service/echo-service and kubectl create ג€"f <yaml-file>
+- C) Update the deployment yaml file with the new container image. Use kubectl delete deployment/echo-deployment and kubectl create -f <yaml-file>
+- D) Update the service yaml file which the new container image. Use kubectl delete service/echo-service and kubectl create -f <yaml-file>
 
 > **Correct Answer:** A
 
@@ -3316,7 +3396,7 @@ Mountkirk Games has deployed their new backend on Google Cloud Platform (GCP). Y
 - A) Create a scalable environment in GCP for simulating production load
 - B) Use the existing infrastructure to test the GCP-based backend at scale
 - C) Build stress tests into each component of your application using resources internal to GCP to simulate load
-- D) Create a set of static environments in GCP to test different levels of load ג€" for example, high, medium, and low
+- D) Create a set of static environments in GCP to test different levels of load - for example, high, medium, and low
 
 > **Correct Answer:** A
 
