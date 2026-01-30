@@ -7,9 +7,7 @@
 
 ### Question 1
 
-Your company has decided to make a major revision of their API in order to create better experiences for their developers. They need to keep the old version of the API available and deployable, while allowing new customers and testers to try out the new API. They want to keep the same SSL and DNS records in place to serve both APIs.
-
-What should they do?
+Your company has decided to make a major revision of their API in order to create better experiences for their developers. They need to keep the old version of the API available and deployable, while allowing new customers and testers to try out the new API. They want to keep the same SSL and DNS records in place to serve both APIs. What should they do?
 
 - A) Configure a new load balancer for the new version of the API
 - B) Reconfigure old clients to use a new endpoint for the new API
@@ -28,9 +26,7 @@ What should they do?
 ---
 ### Question 2
 
-You write a Python script to connect to Google BigQuery from a Google Compute Engine virtual machine. The script is printing errors that it cannot connect to BigQuery.
-
-What should you do to fix the script?
+You write a Python script to connect to Google BigQuery from a Google Compute Engine virtual machine. The script is printing errors that it cannot connect to BigQuery. What should you do to fix the script?
 
 - A) Install the latest BigQuery API client library for Python
 - B) Run your script on a new virtual machine with the BigQuery access scope enabled
@@ -68,9 +64,7 @@ You need to ensure reliability for your application and operations by supporting
 ---
 ### Question 4
 
-Your company is building a new architecture to support its data-centric business focus. You are responsible for setting up the network. Your company's mobile and web-facing applications will be deployed on-premises, and all data analysis will be conducted in GCP. The plan is to process and load 7 years of archived .csv files totaling 900 TB of data and then continue loading 10 TB of data daily. You currently have an existing 100-MB internet connection.
-
-What actions will meet your company's needs?
+Your company is building a new architecture to support its data-centric business focus. You are responsible for setting up the network. Your company's mobile and web-facing applications will be deployed on-premises, and all data analysis will be conducted in GCP. The plan is to process and load 7 years of archived .csv files totaling 900 TB of data and then continue loading 10 TB of data daily. You currently have an existing 100-MB internet connection. What actions will meet your company's needs?
 
 - A) Compress and upload both archived files and files uploaded daily using the gsutil -m option.
 - B) Lease a Transfer Appliance, upload archived files to it, and send it to Google to transfer archived data to Cloud Storage. Establish a connection with Google using a Dedicated Interconnect or Direct Peering connection and use it to upload files daily.
@@ -89,9 +83,7 @@ What actions will meet your company's needs?
 ---
 ### Question 5
 
-You are developing a globally scaled frontend for a legacy streaming backend data API. This API expects events in strict chronological order with no repeat data for proper processing.
-
-Which products should you deploy to ensure guaranteed-once FIFO (first-in, first-out) delivery of data?
+You are developing a globally scaled frontend for a legacy streaming backend data API. This API expects events in strict chronological order with no repeat data for proper processing. Which products should you deploy to ensure guaranteed-once FIFO (first-in, first-out) delivery of data?
 
 - A) Cloud Pub/Sub alone
 - B) Cloud Pub/Sub to Cloud Dataflow
@@ -241,12 +233,18 @@ You are working at a sports association whose members range in age from 8 to 30.
 
 > **Correct Answer:** A
 
+**Spiegazione:**
+
+* **A)** **Corretta:** Questa è la soluzione più diretta e conforme ai requisiti legali (come il GDPR). BigQuery supporta le istruzioni DML `DELETE`. Utilizzando un identificativo univoco (ID utente), è possibile rimuovere fisicamente tutte le righe associate all'interessato, garantendo che i dati sensibili non esistano più nel sistema di archiviazione.
+* **B)** Errata. L'API Cloud Data Loss Prevention (DLP) e Data Catalog sono strumenti eccellenti per la classificazione e la governance dei dati, ma non automatizzano la cancellazione dei dati riga per riga su richiesta. Identificare la colonna non risolve il problema di dover eliminare i record specifici di un singolo individuo.
+* **C)** Errata. Una vista può nascondere i dati, ma non li elimina. I dati originali rimarrebbero nella tabella sorgente, il che violerebbe le normative sulla protezione dei dati che richiedono la cancellazione effettiva (diritto all'oblio). Inoltre, gestire una vista con migliaia di esclusioni individuali diventerebbe rapidamente impossibile in termini di performance e manutenzione.
+* **D)** Errata. L'offuscamento tramite SHA256 salato (pseudonimizzazione) è una tecnica di sicurezza, ma non equivale alla cancellazione dei dati sanitari (come le lesioni subite) richiesti dall'utente. La legge richiede spesso l'eliminazione completa dell'associazione tra l'individuo e i suoi dati sensibili, e mantenere i dati sanitari legati a un hash potrebbe comunque essere considerato un rischio o non pienamente conforme alla richiesta di "cancellazione".
+
 ---
+
 ### Question 13
 
-Your customer is moving an existing corporate application to Google Cloud Platform from an on-premises data center. The business owners require minimal user disruption. There are strict security team requirements for storing passwords.
-
-What authentication strategy should they use?
+Your customer is moving an existing corporate application to Google Cloud Platform from an on-premises data center. The business owners require minimal user disruption. There are strict security team requirements for storing passwords. What authentication strategy should they use?
 
 - A) Use G Suite Password Sync to replicate passwords into Google
 - B) Federate authentication via SAML 2.0 to the existing Identity Provider
@@ -255,7 +253,16 @@ What authentication strategy should they use?
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A)** Errata. Sebbene G Suite Password Sync (ora parte di Google Cloud Directory Sync) permetta di sincronizzare le password da Active Directory, ciò comporta la memorizzazione delle password (seppur in forma di hash) nell'infrastruttura di Google. Questo spesso non soddisfa i "requisiti rigorosi del team di sicurezza" che preferisce che le password non lasciano mai i sistemi on-premises controllati dall'azienda.
+* **B)** **Corretta:** La **federazione tramite SAML 2.0** è la soluzione standard per le imprese che richiedono la massima sicurezza. In questo scenario, Google agisce come Service Provider (SP) e delega l'autenticazione all'Identity Provider (IdP) aziendale esistente (es. AD FS, Okta). La password dell'utente viene inserita solo nel portale aziendale e non viene mai inviata, memorizzata o sincronizzata con Google, garantendo la conformità alle policy di sicurezza più stringenti e offrendo un'esperienza Single Sign-On (SSO) che minimizza il disturbo per l'utente.
+* **C)** Errata. Google Cloud Directory Sync (GCDS) è uno strumento necessario per sincronizzare *account, gruppi e contatti* da Active Directory a Google Cloud, ma di per sé non risolve il problema dell'autenticazione sicura delle password. Viene solitamente usato *insieme* alla federazione SAML (opzione B) per popolare la directory, ma non è la strategia di autenticazione richiesta.
+* **D)** Errata. Questa opzione è tecnicamente insicura, viola qualsiasi best practice di sicurezza informatica e causa un notevole disturbo agli utenti, che dovrebbero gestire manualmente la sincronizzazione delle credenziali.
+
+
 ---
+
 ### Question 14
 
 Your company has announced that they will be outsourcing operations functions. You want to allow developers to easily stage new versions of a cloud-based application in the production environment and allow the outsourced operations team to autonomously promote staged versions to production. You want to minimize the operational overhead of the solution. Which Google Cloud product should you migrate to?
@@ -267,7 +274,15 @@ Your company has announced that they will be outsourcing operations functions. Y
 
 > **Correct Answer:** A
 
+**Spiegazione:**
+
+* **A)** **Corretta:** **App Engine** è la soluzione PaaS (Platform as a Service) di Google Cloud che offre funzionalità native di **Traffic Splitting** e **Versioning**. Gli sviluppatori possono distribuire nuove versioni in modalità "staging" (senza traffico) con un semplice comando o tramite console. Successivamente, il team operativo può promuovere una versione a produzione spostando il 100% del traffico verso di essa, in modo del tutto autonomo e con un clic. Essendo un servizio completamente gestito (No-Ops), riduce al minimo l'overhead operativo richiesto sia agli sviluppatori che alle operazioni esterne.
+* **B)** Errata. **GKE On-Prem** (parte di Anthos) è progettato per eseguire carichi di lavoro Kubernetes in data center locali. Introduce un overhead operativo enorme rispetto alle soluzioni cloud-native e non è coerente con l'obiettivo di migrare a una soluzione basata sul cloud per semplificare le operazioni.
+* **C)** Errata. **Compute Engine** (IaaS) richiede la gestione manuale di macchine virtuali, bilanciatori di carico, aggiornamenti del sistema operativo e script di deployment. Non offre un meccanismo nativo e semplice per lo staging e la promozione delle versioni, richiedendo un intervento operativo significativo.
+* **D)** Errata. Sebbene **Google Kubernetes Engine (GKE)** supporti strategie di deployment avanzate (come Canary o Blue/Green), richiede la gestione di manifest YAML, ingress controller e pipeline CI/CD esterne per gestire lo staging e la promozione. L'overhead operativo è decisamente superiore rispetto alla semplicità "out-of-the-box" di App Engine.
+
 ---
+
 ### Question 15
 
 Your company is running its application workloads on Compute Engine. The applications have been deployed in production, acceptance, and development environments. The production environment is business-critical and is used 24/7, while the acceptance and development environments are only critical during office hours. Your CFO has asked you to optimize these environments to achieve cost savings during idle times. What should you do?
@@ -279,7 +294,16 @@ Your company is running its application workloads on Compute Engine. The applica
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A)** Errata. Cambiare il tipo di macchina richiede il riavvio dell'istanza e, sebbene riduca i costi, non è efficace quanto spegnerla completamente. Inoltre, eseguire lo script su una istanza di produzione introduce una dipendenza rischiosa e un overhead di gestione manuale non necessario.
+* **B)** **Corretta:** Questa è la soluzione **serverless** e nativa di GCP per l'automazione dei costi. **Cloud Scheduler** funge da "cron job" che invia un segnale a una **Cloud Function**. La funzione utilizza le API di Compute Engine per arrestare le istanze (eliminando i costi di calcolo) e riavviarle quando necessario. È una soluzione a basso costo, scalabile e non richiede la gestione di server aggiuntivi.
+* **C)** Errata. L'autoscaling si basa su metriche come l'utilizzo della CPU o il carico delle richieste. Sebbene possa ridurre il numero di istanze se il traffico diminuisce, non garantisce lo spegnimento totale degli ambienti durante le ore non lavorative se sono presenti processi in background o traffico minimo, e richiede una configurazione più complessa.
+* **D)** Errata. Le **Preemptible VMs** (o Spot VMs) possono essere interrotte da Google in qualsiasi momento con un preavviso di 30 secondi e hanno una durata massima limitata. Sebbene siano molto economiche, non sono adatte ad ambienti di accettazione dove la stabilità è necessaria durante le ore d'ufficio per i test. Inoltre, non garantiscono lo spegnimento programmato per ottimizzare i costi nelle ore notturne.
+
+
 ---
+
 ### Question 16
 
 You are moving an application that uses MySQL from on-premises to Google Cloud. The application will run on Compute Engine and will use Cloud SQL. You want to cut over to the Compute Engine deployment of the application with minimal downtime and no data loss to your customers. You want to migrate the application with minimal modification. You also need to determine the cutover strategy. What should you do?
@@ -291,7 +315,18 @@ You are moving an application that uses MySQL from on-premises to Google Cloud. 
 
 > **Correct Answer:** C
 
+**Spiegazione:**
+
+* **A)** Errata. Questa procedura richiede di modificare il codice sorgente per scrivere su due database contemporaneamente, violando il requisito di "modifiche minime". Inoltre, fermare l'applicazione all'inizio per eseguire il dump e l'importazione comporterebbe un downtime significativo, non rispettando l'obiettivo di "minimal downtime".
+* **B)** Errata. L'uso di `mysqldump` come unico metodo di migrazione per database di produzione causa quasi sempre una perdita di dati (tra il momento del dump e il cutover) o un downtime prolungato se l'applicazione viene spenta durante tutto il processo di upload e importazione.
+* **C)** **Corretta:** Questa strategia utilizza la **replica esterna (External Replica)** di Cloud SQL.
+  1. Mantenendo l'app su GCE collegata al DB on-premises tramite VPN, si sposta la logica di calcolo riducendo il rischio.
+  2. Configurando Cloud SQL come replica del database on-premises, i dati vengono sincronizzati continuamente in background senza interrompere il servizio.
+  3. Al momento del cutover, la replica viene "promossa" a istanza standalone e l'applicazione viene semplicemente puntata al nuovo endpoint. Questo garantisce **zero perdite di dati** e un **downtime minimo** (solo il tempo necessario per la promozione e il riavvio dell'app).
+* **D)** Errata. Come l'opzione B, questa procedura causa un downtime esteso. Spegnere l'applicazione durante il dump, l'upload su Cloud Storage e l'importazione in Cloud SQL è un processo lento che non soddisfa i requisiti di business per un servizio a bassa interruzione.
+
 ---
+
 ### Question 17
 
 Your organization has decided to restrict the use of external IP addresses on instances to only approved instances. You want to enforce this requirement across all of your Virtual Private Clouds (VPCs). What should you do?
@@ -303,12 +338,18 @@ Your organization has decided to restrict the use of external IP addresses on in
 
 > **Correct Answer:** D
 
+**Spiegazione:**
+
+* **A)** Errata. Rimuovere la rotta di default (`0.0.0.0/0`) impedirebbe a tutte le istanze di raggiungere internet, ma non impedisce tecnicamente l'assegnazione di un IP esterno a un'istanza. Inoltre, le rotte sono a livello di VPC, non di singola istanza, rendendo questa soluzione complessa da gestire e non risolutiva per il vincolo di conformità richiesto.
+* **B)** Errata. Creare una nuova VPC e sottoreti specifiche è una buona pratica di segmentazione, ma non applica una restrizione o una "policy" che impedisca a un utente con permessi sufficienti di assegnare un IP esterno a un'istanza in altre parti dell'organizzazione.
+* **C)** Errata. Sebbene Cloud NAT permetta alle istanze senza IP esterno di accedere a internet (permettendo quindi di rimuoverli), di per sé non *impedisce* o *limita* l'assegnazione di IP esterni. La domanda richiede di applicare una restrizione (enforce) per garantire che solo le istanze approvate possano averne uno.
+* **D)** **Corretta:** L'uso delle **Organization Policies** è il metodo centralizzato e scalabile per applicare restrizioni di governance su Google Cloud. Il vincolo `constraints/compute.vmExternalIpAccess` permette di definire esattamente quali istanze (tramite il loro nome o URI) possono avere un indirizzo IP esterno. Una volta applicata a livello di organizzazione o progetto, qualsiasi tentativo di assegnare un IP esterno a un'istanza non inclusa nella `allowedValues` list verrà bloccato automaticamente, indipendentemente dai permessi IAM dell'utente.
+
 ---
+
 ### Question 18
 
-Your company uses the Firewall Insights feature in the Google Network Intelligence Center. You have several firewall rules applied to Compute Engine instances.
-
-You need to evaluate the efficiency of the applied firewall ruleset. When you bring up the Firewall Insights page in the Google Cloud Console, you notice that there are no log rows to display. What should you do to troubleshoot the issue?
+Your company uses the Firewall Insights feature in the Google Network Intelligence Center. You have several firewall rules applied to Compute Engine instances. You need to evaluate the efficiency of the applied firewall ruleset. When you bring up the Firewall Insights page in the Google Cloud Console, you notice that there are no log rows to display. What should you do to troubleshoot the issue?
 
 - A) Enable Virtual Private Cloud (VPC) flow logging.
 - B) Enable Firewall Rules Logging for the firewall rules you want to monitor.
@@ -317,7 +358,16 @@ You need to evaluate the efficiency of the applied firewall ruleset. When you br
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A)** Errata. I **VPC Flow Logs** registrano i flussi di traffico di rete tra le interfacce delle VM (invio/ricezione di pacchetti), ma non forniscono informazioni specifiche sull'efficacia delle regole del firewall o su quali regole siano state attivate (allow/deny).
+* **B)** **Corretta:** Firewall Insights analizza i dati provenienti dai **Firewall Rules Logging**. Se questa funzione non è abilitata per le singole regole del firewall che si desidera monitorare, non verranno generati log da analizzare. Abilitando il logging sulle regole, GCP inizia a raccogliere metadati sulle connessioni consentite o bloccate, permettendo a Firewall Insights di identificare regole ridondanti, sovrapposte o sottoutilizzate.
+* **C)** Errata. Sebbene il ruolo `compute.networkAdmin` sia necessario per gestire le reti, il fatto che la pagina venga visualizzata ma risulti vuota ("no log rows to display") indica solitamente una mancanza di dati sorgente piuttosto che un problema di permessi di visualizzazione (che causerebbe invece un errore di "accesso negato").
+* **D)** Errata. Verificare i log tramite l'SDK (gcloud) confermerebbe solo l'assenza di dati nei log, ma non risolverebbe la causa principale del problema, ovvero la mancata generazione dei log stessi alla base del servizio Firewall Insights.
+
+
 ---
+
 ### Question 19
 
 Your company has sensitive data in Cloud Storage buckets. Data analysts have Identity Access Management (IAM) permissions to read the buckets. You want to prevent data analysts from retrieving the data in the buckets from outside the office network. What should you do?
@@ -329,7 +379,16 @@ Your company has sensitive data in Cloud Storage buckets. Data analysts have Ide
 
 > **Correct Answer:** A
 
+**Spiegazione:**
+
+* **A)** **Corretta:** **VPC Service Controls (VPC SC)** è lo strumento di sicurezza perimetrale di GCP progettato per mitigare il rischio di esfiltrazione di dati. Creando un perimetro di servizio attorno ai progetti che contengono i bucket di Cloud Storage e definendo un **Access Level** (tramite Access Context Manager) che limita l'accesso solo al **CIDR della rete dell'ufficio**, ti assicuri che, anche se gli analisti hanno i permessi IAM corretti, non possano accedere ai dati se non sono fisicamente o logicamente connessi dalla rete aziendale autorizzata.
+* **B)** Errata. Le regole del firewall di GCP si applicano al traffico in entrata e in uscita dalle istanze di macchine virtuali (Compute Engine). Non hanno alcun effetto sulle API dei servizi gestiti come Cloud Storage, che risiedono al di fuori della rete VPC dell'utente.
+* **C)** Errata. Questa soluzione è complessa, fragile e non risolve il problema principale: l'accesso durante l'orario d'ufficio da posizioni non autorizzate. Gli analisti potrebbero comunque scaricare i dati da casa durante le ore lavorative. Inoltre, la gestione dinamica dei permessi IAM non è una best practice per la sicurezza perimetrale.
+* **D)** Errata. Sebbene Cloud VPN e Private Google Access consentano agli host on-premises di comunicare con i servizi Google tramite IP privati, di per sé non *impediscono* l'accesso ai bucket tramite l'internet pubblico (endpoint standard di Cloud Storage) se l'utente possiede le credenziali IAM necessarie.
+
+
 ---
+
 ### Question 20
 
 You have developed a non-critical update to your application that is running in a managed instance group, and have created a new instance template with the update that you want to release. To prevent any possible impact to the application, you don't want to update any running instances. You want any new instances that are created by the managed instance group to contain the new update. What should you do?
@@ -341,7 +400,16 @@ You have developed a non-critical update to your application that is running in 
 
 > **Correct Answer:** D
 
+**Spiegazione:**
+
+* **A)** Errata. Un'operazione di **rolling restart** riavvia semplicemente le istanze esistenti senza cambiare il software o il template. Anche se il template del gruppo fosse aggiornato, un restart non garantisce l'applicazione di una nuova configurazione che richiede la ricreazione dell'istanza.
+* **B)** Errata. Un'operazione di **rolling replace** sostituisce attivamente le istanze esistenti con nuove istanze basate sul nuovo template. Questo viola il requisito esplicito di "non voler aggiornare nessuna delle istanze in esecuzione" per prevenire impatti.
+* **C)** Errata. Nella modalità **Proactive**, il Managed Instance Group (MIG) pianifica e applica attivamente l'aggiornamento a tutte le istanze esistenti nel gruppo il prima possibile. Questo causerebbe la sostituzione delle istanze attuali, contrariamente a quanto richiesto.
+* **D)** **Corretta:** La modalità di aggiornamento **Opportunistic** comunica al MIG di utilizzare il nuovo template solo quando vengono create nuove istanze (ad esempio tramite autoscaling o se un'istanza esistente viene eliminata e ricreata per riparazione). Le istanze attualmente in esecuzione non vengono toccate, garantendo che l'aggiornamento non abbia alcun impatto immediato sull'applicazione esistente, soddisfacendo perfettamente tutti i requisiti.
+
+
 ---
+
 ### Question 21
 
 Your company is designing its application landscape on Compute Engine. Whenever a zonal outage occurs, the application should be restored in another zone as quickly as possible with the latest application data. You need to design the solution to meet this requirement. What should you do?
@@ -353,7 +421,15 @@ Your company is designing its application landscape on Compute Engine. Whenever 
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A)** Errata. Ripristinare il disco nella **stessa zona** colpita dall'outage non risolve il problema, poiché l'intera zona è indisponibile. Inoltre, i snapshot hanno un Recovery Point Objective (RPO) basato sulla frequenza della schedulazione, il che potrebbe comportare la perdita di dati più recenti rispetto a una replica sincrona.
+* **B)** **Corretta:** Questa architettura garantisce il ripristino più rapido con la minima perdita di dati. Un **Regional Persistent Disk (repd)** esegue la replica sincrona dei dati tra due zone della stessa regione. In caso di guasto zonale, i dati sono già presenti nella zona secondaria. Utilizzando l'**Instance Template**, è possibile ricreare rapidamente l'istanza nella zona funzionante e montare il disco regionale, garantendo la disponibilità dei dati più recenti.
+* **C)** Errata. Sebbene i snapshot siano memorizzati in modo multi-regionale e possano essere usati per ripristinare un disco in un'altra zona, il processo di creazione e ripristino di un disco da snapshot è più lento rispetto al montaggio di un disco regionale esistente. Inoltre, si perderebbe comunque il delta di dati tra l'ultimo snapshot e il momento del guasto.
+* **D)** Errata. I **Regional Persistent Disks** sono replicati tra due zone all'interno della **stessa regione**, non tra regioni diverse. Per un ripristino in un'altra regione, sarebbe necessario utilizzare meccanismi diversi come gli Snapshot o la Cross-Region Replication, che però non soddisfano il requisito di velocità e aggiornamento dati richiesto in modo nativo dal Regional PD.
+
 ---
+
 ### Question 22
 
 Your company has just acquired another company, and you have been asked to integrate their existing Google Cloud environment into your company's data center. Upon investigation, you discover that some of the RFC 1918 IP ranges being used in the new company's Virtual Private Cloud (VPC) overlap with your data center IP space. What should you do to enable connectivity and make sure that there are no routing conflicts when connectivity is established?
@@ -363,9 +439,18 @@ Your company has just acquired another company, and you have been asked to integ
 - C) Create a Cloud VPN connection from the new VPC to the data center, create a Cloud Router, and apply a custom route advertisement to block the overlapping IP space.
 - D) Create a Cloud VPN connection from the new VPC to the data center, and apply a firewall rule that blocks the overlapping IP space.
 
-> **Correct Answer:** B
+> **Correct Answer:** A (Da ExamPrepper viene suggerita la B)
+
+**Spiegazione:**
+
+* **A)** **Corretta:** In Google Cloud, la soluzione standard e definitiva per risolvere conflitti di indirizzi IP sovrapposti (overlapping) tra una VPC e una rete on-premise è **riassegnare nuovi indirizzi IP** (re-addressing) alle sottoreti della VPC acquisita. Una volta eliminata la sovrapposizione, il **Cloud Router** può scambiare le rotte correttamente tramite BGP attraverso la Cloud VPN, garantendo una connettività bidirezionale senza ambiguità di instradamento.
+* **B)** Errata. **Cloud NAT** in Google Cloud è progettato principalmente per fornire accesso a Internet (SNAT) alle istanze prive di IP pubblico. Non supporta funzionalità di NAT bidirezionale o "Twice NAT" per risolvere conflitti di indirizzi IP tra tunnel VPN e reti on-premise (funzionalità tipica invece di appliance firewall di terze parti).
+* **C)** Errata. Configurare il Cloud Router per bloccare l'annuncio (advertisement) delle rotte sovrapposte eliminerebbe il conflitto nella tabella di routing, ma renderebbe le risorse in quegli intervalli IP **irraggiungibili**. Questo viola il requisito fondamentale di "abilitare la connettività".
+* **D)** Errata. Le regole firewall gestiscono i permessi di traffico (allow/deny), ma non risolvono i problemi di **instradamento**. Se gli indirizzi IP si sovrappongono, il router locale prevarrà sempre (connected route), impedendo al traffico di essere instradato correttamente nel tunnel VPN, indipendentemente dalle regole firewall.
+
 
 ---
+
 ### Question 23
 
 You need to migrate Hadoop jobs for your company's Data Science team without modifying the underlying infrastructure. You want to minimize costs and infrastructure management effort. What should you do?
@@ -377,12 +462,19 @@ You need to migrate Hadoop jobs for your company's Data Science team without mod
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A)** Errata. Sebbene l'uso di Dataproc riduca l'effort di gestione dell'infrastruttura rispetto a un'installazione manuale, l'utilizzo di istanze standard per tutti i nodi worker non è la scelta ottimale per minimizzare i costi, specialmente per carichi di lavoro Hadoop che possono tollerare interruzioni.
+* **B)** **Corretta:** **Cloud Dataproc** è il servizio gestito di Google Cloud per eseguire cluster Hadoop/Spark, il che soddisfa il requisito di "minimizzare l'effort di gestione". L'uso di **preemptible worker instances** (Spot VMs) permette di ridurre drasticamente i costi (fino all'80%). Poiché i job Hadoop sono progettati per essere resilienti alla perdita di singoli nodi, questa configurazione è ideale per la data science, dove il risparmio economico è prioritario rispetto alla garanzia assoluta di uptime dei singoli nodi.
+* **C)** Errata. La distribuzione manuale di Hadoop su Compute Engine richiede una gestione complessa: configurazione del software, patch, scalabilità manuale e manutenzione del cluster. Questo contrasta direttamente con l'obiettivo di "minimizzare l'effort di gestione dell'infrastruttura".
+* **D)** Errata. Anche se l'uso di istanze preemptible riduce i costi, la gestione manuale su Compute Engine rimane inefficiente dal punto di vista operativo. Dataproc automatizza la creazione, la scalabilità e la terminazione dei cluster, rendendo superflua la gestione manuale delle VM.
+
+
 ---
+
 ### Question 24
 
-Your company has successfully migrated to the cloud and wants to analyze their data stream to optimize operations. They do not have any existing code for this analysis, so they are exploring all their options. These options include a mix of batch and stream processing, as they are running some hourly jobs and live- processing some data as it comes in.
-
-Which technology should they use for this?
+Your company has successfully migrated to the cloud and wants to analyze their data stream to optimize operations. They do not have any existing code for this analysis, so they are exploring all their options. These options include a mix of batch and stream processing, as they are running some hourly jobs and live-processing some data as it comes in. Which technology should they use for this?
 
 - A) Google Cloud Dataproc
 - B) Google Cloud Dataflow
@@ -391,21 +483,36 @@ Which technology should they use for this?
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A)** Errata. **Cloud Dataproc** è eccellente per migrare carichi di lavoro Hadoop/Spark esistenti. Tuttavia, la domanda specifica che l'azienda **non ha codice esistente**. Gestire Dataproc richiederebbe la configurazione e la manutenzione di un cluster, il che non è la scelta ottimale per chi cerca una soluzione moderna e unificata senza debito tecnico pregresso.
+* **B)** **Corretta:** **Cloud Dataflow** è la scelta ideale per questo scenario. È un servizio **completamente gestito** (serverless) basato sul modello Apache Beam, progettato specificamente per unificare il **batch e stream processing**. Poiché l'azienda non ha codice esistente, iniziare con Dataflow permette di scrivere pipeline che gestiscono sia i job orari che i dati in tempo reale con lo stesso SDK, scalando automaticamente in base al volume dei dati senza dover gestire l'infrastruttura sottostante.
+* **C)** Errata. Google Kubernetes Engine (GKE) con Bigtable richiederebbe lo sviluppo manuale di tutta la logica di analisi e la gestione dei container. Bigtable è un database NoSQL ad alte prestazioni, non un motore di elaborazione dati. Questa soluzione comporterebbe un overhead operativo e di sviluppo eccessivo.
+* **D)** Errata. Google Compute Engine (IaaS) richiede la gestione totale dei server. BigQuery è uno strumento eccezionale per l'analisi (data warehouse), ma non è un motore di elaborazione di flussi di dati (data stream) in tempo reale nel senso stretto della trasformazione ETL complessa fornita da Dataflow.
+
 ---
+
 ### Question 25
 
-Your company has a project in Google Cloud with three Virtual Private Clouds (VPCs). There is a Compute Engine instance on each VPC. Network subnets do not overlap and must remain separated. The network configuration is shown below.
+Your company has a project in Google Cloud with three Virtual Private Clouds (VPCs). There is a Compute Engine instance on each VPC. Network subnets do not overlap and must remain separated. The network configuration is shown below. Instance #1 is an exception and must communicate directly with both Instance #2 and Instance #3 via internal IPs. How should you accomplish this?
 
-Instance #1 is an exception and must communicate directly with both Instance #2 and Instance #3 via internal IPs. How should you accomplish this?
-
-- A) Create a cloud router to advertise subnet #2 and subnet #3 to subnet #1.
-- B) Add two additional NICs to Instance #1 with the following configuration: ג€¢ NIC1 ג—‹ VPC: VPC #2 ג—‹ SUBNETWORK: subnet #2 ג€¢ NIC2 ג—‹ VPC: VPC #3 ג—‹ SUBNETWORK: subnet #3 Update firewall rules to enable traffic between instances.
-- C) Create two VPN tunnels via CloudVPN: ג€¢ 1 between VPC #1 and VPC #2. ג€¢ 1 between VPC #2 and VPC #3. Update firewall rules to enable traffic between the instances.
-- D) Peer all three VPCs: ג€¢ Peer VPC #1 with VPC #2. ג€¢ Peer VPC #2 with VPC #3. Update firewall rules to enable traffic between the instances.
+- A) Create a Cloud Router to advertise subnet #2 and subnet #3 to subnet #1.
+- B) Add two additional NICs to Instance #1 with the following configuration:• NIC1: - VPC: VPC #2; - Subnetwork: subnet #2;  • NIC2: - VPC: VPC #3; - Subnetwork: subnet #3;  Update firewall rules to enable traffic between instances.
+- C) Create two VPN tunnels via Cloud VPN:  • One between VPC #1 and VPC #2;  • One between VPC #2 and VPC #3;  Update firewall rules to enable traffic between the instances.
+- D) Peer all three VPCs:  • Peer VPC #1 with VPC #2;  • Peer VPC #2 with VPC #3; Update firewall rules to enable traffic between the instances.
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A)** Errata. Il **Cloud Router** viene utilizzato per scambiare rotte dinamiche tramite BGP (solitamente su VPN o Interconnect), ma non può collegare direttamente due VPC separate che non abbiano già un tunnel o un meccanismo di connettività sottostante. Da solo, non abilita la comunicazione tra reti isolate.
+* **B)** **Corretta:** Questa è l'unica soluzione che soddisfa il requisito di far comunicare l'Istanza #1 con le altre due mantenendo al contempo le **VPC separate** (senza peering globale). In Google Cloud, una singola istanza può avere più interfacce di rete (**multi-NIC**), ciascuna collegata a una VPC differente. Configurando l'Istanza #1 con una NIC in VPC #1, una in VPC #2 e una in VPC #3, l'istanza diventa un "bridge" che può parlare con le altre tramite IP interni senza che le VPC vengano unite tra loro.
+* **C)** Errata. Sebbene i tunnel VPN permettano la comunicazione via IP interni, la configurazione proposta (VPC#1-VPC#2 e VPC#2-VPC#3) non permetterebbe all'Istanza #1 (in VPC #1) di parlare con l'Istanza #3 (in VPC #3). Il routing transitivo non è supportato nativamente in questo modo su Cloud VPN; inoltre, questa soluzione è molto più complessa e costosa rispetto all'aggiunta di interfacce di rete.
+* **D)** Errata. Il **VPC Network Peering** non è transitivo. Se effettui il peering tra VPC#1-VPC#2 e tra VPC#2-VPC#3, l'Istanza #1 non potrà comunque comunicare con l'Istanza #3. Per farlo, dovresti creare un peering diretto tra VPC#1 e VPC#3. Tuttavia, il peering "unisce" le reti a livello di routing, mentre il requisito suggerisce di mantenere le reti separate, rendendo l'approccio multi-NIC dell'Istanza #1 più granulare e sicuro per questo caso d'uso specifico.
+
+
 ---
+
 ### Question 26
 
 You need to deploy an application on Google Cloud that must run on a Debian Linux environment. The application requires extensive configuration in order to operate correctly. You want to ensure that you can install Debian distribution updates with minimal manual intervention whenever they become available. What should you do?
@@ -417,7 +524,15 @@ You need to deploy an application on Google Cloud that must run on a Debian Linu
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A)** Errata. Utilizzare uno script di startup per una "configurazione estesa" (extensive configuration) aumenta notevolmente i tempi di avvio delle istanze e introduce fragilità, poiché l'installazione potrebbe fallire a causa di dipendenze esterne cambiate nel tempo. Inoltre, richiede comunque un intervento manuale o un'automazione esterna per ricreare il template ogni volta che Google rilascia una nuova immagine.
+* **B)** **+Corretta:** Questa è la soluzione più efficiente per bilanciare la complessità della configurazione iniziale con la necessità di aggiornamenti continui. Installando l'applicazione una sola volta su un'istanza e utilizzando **VM Manager / OS Patch Management**, Google Cloud automatizza l'inventario, la scansione e l'applicazione delle patch di sicurezza e degli aggiornamenti della distribuzione Debian. Questo permette di mantenere il sistema operativo aggiornato con il "minimo intervento manuale", senza dover ricostruire l'intera infrastruttura ogni volta.
+* **C)** Errata. Questo approccio è puramente manuale e non scalabile. Dover rieseguire SSH, installazione e configurazione ogni volta che viene rilasciata una nuova immagine Google-managed è l'opposto del "minimal manual intervention" richiesto.
+* **D)** Errata. Sebbene i container siano ottimi per la portabilità, Docker non è la soluzione ottimale per chi vuole aggiornare la distribuzione con il minimo sforzo. Per aggiornare Debian in un container, dovresti ricostruire l'immagine, testarla e ridistribuirla. Inoltre, gestire un cluster GKE solo per un'applicazione che richiede un ambiente Debian specifico introduce un overhead gestionale (Anthos/K8s) eccessivo rispetto a una VM con patch management.
+
 ---
+
 ### Question 27
 
 You have an application that runs in Google Kubernetes Engine (GKE). Over the last 2 weeks, customers have reported that a specific part of the application returns errors very frequently. You currently have no logging or monitoring solution enabled on your GKE cluster. You want to diagnose the problem, but you have not been able to replicate the issue. You want to cause minimal disruption to the application. What should you do?
@@ -429,7 +544,15 @@ You have an application that runs in Google Kubernetes Engine (GKE). Over the la
 
 > **Correct Answer:** A
 
+**Spiegazione:**
+
+* **A)** **+Corretta:** Questa è la soluzione più rapida e meno invasiva. Abilitare **Cloud Operations for GKE** (precedentemente noto come Stackdriver) su un cluster esistente è un'operazione che non richiede la ricostruzione dell'infrastruttura. Una volta attivato, i log dei container e le metriche di sistema iniziano a fluire automaticamente verso la console di Cloud Logging e Monitoring. Poiché il problema si verifica in produzione ma non è replicabile altrove, analizzare i log dei Pod "live" nel loro ambiente originale è l'unico modo per catturare l'errore con il minimo disturbo per gli utenti.
+* **B)** Errata. Creare un nuovo cluster e migrare i carichi di lavoro introduce un **disruption** (interruzione) significativo e un overhead operativo non necessario. Inoltre, se il problema fosse legato a variabili ambientali o di rete specifiche del cluster attuale, la migrazione potrebbe mascherare il bug invece di aiutarne la diagnosi.
+* **C)** Errata. Sebbene l'aggiornamento del cluster sia corretto, l'installazione di Prometheus aggiunge una complessità extra in un momento di crisi. Prometheus è eccellente per le metriche, ma la domanda riguarda la diagnosi di errori specifici dell'applicazione, operazione per la quale i **log** (già forniti da Cloud Operations) sono solitamente più utili delle metriche aggregate. Inoltre, un alert ti avviserebbe dell'errore, ma non ti fornirebbe necessariamente il "perché" (la stack trace) che troveresti invece nei log.
+* **D)** Errata. Combina gli svantaggi della migrazione tra cluster (opzione B) con la complessità aggiuntiva di Prometheus (opzione C). È la soluzione che causa il massimo disturbo e richiede il massimo sforzo, l'esatto opposto di quanto richiesto.
+
 ---
+
 ### Question 28
 
 You need to deploy a stateful workload on Google Cloud. The workload can scale horizontally, but each instance needs to read and write to the same POSIX filesystem. At high load, the stateful workload needs to support up to 100 MB/s of writes. What should you do?
@@ -441,12 +564,19 @@ You need to deploy a stateful workload on Google Cloud. The workload can scale h
 
 > **Correct Answer:** C
 
+**Spiegazione:**
+
+* **A)** Errata. I **Persistent Disks** standard sono dispositivi a blocchi progettati per essere montati in modalità lettura/scrittura da una singola istanza alla volta (nella modalità standard). Sebbene supportino il montaggio multi-writer in modalità "Read-only" per molte istanze, non permettono a più istanze di scrivere contemporaneamente sullo stesso filesystem POSIX, il che causerebbe la corruzione dei dati.
+* **B)** Errata. I **Regional Persistent Disks** offrono la replica sincrona tra due zone, ma mantengono lo stesso limite fondamentale: possono essere montati in modalità lettura/scrittura da una sola istanza. Non sono una soluzione per un filesystem condiviso tra più nodi di un gruppo che scala orizzontalmente.
+* **C)** **+Corretta:** **Cloud Filestore** è il servizio di file storage gestito di Google Cloud che offre un filesystem conforme allo standard **POSIX** tramite protocollo NFS. È progettato specificamente per scenari in cui più istanze Compute Engine o nodi GKE devono condividere lo stesso spazio di archiviazione con accesso simultaneo in lettura e scrittura. Il livello "Basic" di Filestore supporta ampiamente il requisito di throughput di **100 MB/s**, rendendolo la scelta ideale per carichi di lavoro stateful che scalano orizzontalmente.
+* **D)** Errata. Sebbene **gcsfuse** permetta di montare un bucket di Cloud Storage come filesystem, non è un filesystem POSIX completo (ad esempio, non supporta il file locking o le rinomine atomiche in modo standard). Inoltre, le performance di scrittura con gcsfuse sono soggette alla latenza delle API di storage ad oggetti e potrebbero non garantire i 100 MB/s costanti e la coerenza dei dati richiesta da un'applicazione stateful ad alto carico.
+
+
 ---
+
 ### Question 29
 
-Your company has an application deployed on Anthos clusters (formerly Anthos GKE) that is running multiple microservices. The cluster has both Anthos Service
-
-Mesh and Anthos Config Management configured. End users inform you that the application is responding very slowly. You want to identify the microservice that is causing the delay. What should you do?
+Your company has an application deployed on Anthos clusters (formerly Anthos GKE) that is running multiple microservices. The cluster has both Anthos Service Mesh and Anthos Config Management configured. End users inform you that the application is responding very slowly. You want to identify the microservice that is causing the delay. What should you do?
 
 - A) Use the Service Mesh visualization in the Cloud Console to inspect the telemetry between the microservices.
 - B) Use Anthos Config Management to create a ClusterSelector selecting the relevant cluster. On the Google Cloud Console page for Google Kubernetes Engine, view the Workloads and filter on the cluster. Inspect the configurations of the filtered workloads.
@@ -455,7 +585,15 @@ Mesh and Anthos Config Management configured. End users inform you that the appl
 
 > **Correct Answer:** A
 
+**Spiegazione:**
+
+* **A)** **+Corretta:** **Anthos Service Mesh (ASM)** raccoglie automaticamente dati di telemetria (latenza, traffico, errori) per tutte le comunicazioni tra i microservizi all'interno del mesh. La dashboard di Service Mesh nella Google Cloud Console fornisce una **visualizzazione grafica della topologia** del servizio, permettendo di vedere in tempo reale quali archi di comunicazione presentano una latenza elevata. Questo è lo strumento diagnostico primario per identificare rapidamente un "collo di bottiglia" in un'architettura a microservizi.
+* **B)** Errata. **Anthos Config Management (ACM)** è uno strumento per la gestione dichiarativa delle configurazioni (policy, quote, ruoli) tramite Git. I `ClusterSelector` servono a decidere a quali cluster applicare una determinata configurazione, ma non forniscono dati sulle performance in tempo reale o sulla latenza delle richieste tra i servizi.
+* **C)** Errata. Similmente alla B, il `namespaceSelector` viene usato per applicare configurazioni a specifici namespace tramite ACM. Ispezionare la configurazione dei workload (es. limiti di CPU/RAM) può aiutare a capire se un pod è configurato male, ma non è il metodo diretto per identificare quale servizio sta rallentando la catena delle chiamate.
+* **D)** Errata. Anthos Service Mesh è già una versione gestita e ottimizzata di Istio (o basata su di essa). Reinstallare Istio con il profilo di default non solo causerebbe un downtime non necessario, ma eliminerebbe i vantaggi della versione gestita di Anthos. ASM raccoglie già i dati di latenza per impostazione predefinita senza bisogno di reinstallazioni.
+
 ---
+
 ### Question 30
 
 You are working at a financial institution that stores mortgage loan approval documents on Cloud Storage. Any change to these approval documents must be uploaded as a separate approval file, so you want to ensure that these documents cannot be deleted or overwritten for the next 5 years. What should you do?
@@ -467,7 +605,15 @@ You are working at a financial institution that stores mortgage loan approval do
 
 > **Correct Answer:** A
 
+**Spiegazione:**
+
+* **A)** **+Corretta:** Per garantire che i documenti non possano essere né eliminati né sovrascritti per un periodo determinato (requisito di conformità o WORM - Write Once Read Many), la soluzione corretta è una **Retention Policy** di Cloud Storage. Impostando la durata a 5 anni e applicando un **Lock** alla policy, si rende il vincolo immutabile: nemmeno un amministratore del progetto o il proprietario dell'account potrà rimuovere la policy o eliminare i file fino alla scadenza del termine. Questo soddisfa pienamente i rigorosi requisiti delle istituzioni finanziarie.
+* **B)** Errata. L'accesso uniforme a livello di bucket (**Uniform bucket-level access**) semplifica la gestione dei permessi, ma il ruolo di **Object Writer** permette comunque a un utente o service account di sovrascrivere o eliminare oggetti se possiede i permessi necessari. Non fornisce alcuna garanzia di immutabilità temporale.
+* **C)** Errata. La rotazione delle chiavi di crittografia gestite dal cliente (**CMEK**) serve a proteggere i dati a riposo e a limitare l'impatto in caso di compromissione di una chiave. Non impedisce in alcun modo l'eliminazione o la sovrascrittura dei file da parte di un utente autorizzato.
+* **D)** Errata. Il controllo degli accessi granulare (**Fine-grained access control / ACLs**) permette di definire permessi a livello di singolo oggetto, ma come per l'opzione B, non offre un meccanismo per "bloccare" l'eliminazione dei dati per un periodo di tempo specifico contro azioni intenzionali o accidentali di utenti con permessi di scrittura.
+
 ---
+
 ### Question 31
 
 Your team will start developing a new application using microservices architecture on Kubernetes Engine. As part of the development lifecycle, any code change that has been pushed to the remote develop branch on your GitHub repository should be built and tested automatically. When the build and test are successful, the relevant microservice will be deployed automatically in the development environment. You want to ensure that all code deployed in the development environment follows this process. What should you do?
