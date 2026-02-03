@@ -24,6 +24,7 @@ Your company has decided to make a major revision of their API in order to creat
 
 
 ---
+
 ### Question 2
 
 You write a Python script to connect to Google BigQuery from a Google Compute Engine virtual machine. The script is printing errors that it cannot connect to BigQuery. What should you do to fix the script?
@@ -43,6 +44,7 @@ You write a Python script to connect to Google BigQuery from a Google Compute En
 
 
 ---
+
 ### Question 3
 
 You need to ensure reliability for your application and operations by supporting reliable task scheduling for compute on GCP. Leveraging Google best practices, what should you do?
@@ -62,6 +64,7 @@ You need to ensure reliability for your application and operations by supporting
 * **D)** Anche se Pub/Sub è corretto, usare GKE Cron è **overkill** rispetto ad App Engine Cron, che è più semplice e gestito per task pianificati.
 
 ---
+
 ### Question 4
 
 Your company is building a new architecture to support its data-centric business focus. You are responsible for setting up the network. Your company's mobile and web-facing applications will be deployed on-premises, and all data analysis will be conducted in GCP. The plan is to process and load 7 years of archived .csv files totaling 900 TB of data and then continue loading 10 TB of data daily. You currently have an existing 100-MB internet connection. What actions will meet your company's needs?
@@ -81,6 +84,7 @@ Your company is building a new architecture to support its data-centric business
 * **D)** Anche senza `gsutil -m`, la **VPN su internet** resta un collo di bottiglia e non soddisfa i requisiti di scala e affidabilità.
 
 ---
+
 ### Question 5
 
 You are developing a globally scaled frontend for a legacy streaming backend data API. This API expects events in strict chronological order with no repeat data for proper processing. Which products should you deploy to ensure guaranteed-once FIFO (first-in, first-out) delivery of data?
@@ -100,6 +104,7 @@ You are developing a globally scaled frontend for a legacy streaming backend dat
 * **D)** Cloud SQL può archiviare i dati, ma **non garantisce l’ordine FIFO** né l’elaborazione exactly-once come Dataflow.
 
 ---
+
 ### Question 6
 
 Your company is planning to perform a lift and shift migration of their Linux RHEL 6.5+ virtual machines. The virtual machines are running in an on-premises VMware environment. You want to migrate them to Compute Engine following Google-recommended practices. What should you do?
@@ -120,6 +125,7 @@ Your company is planning to perform a lift and shift migration of their Linux RH
 
 
 ---
+
 ### Question 7
 
 You need to deploy an application to Google Cloud. The application receives traffic via TCP and reads and writes data to the filesystem. The application does not support horizontal scaling. The application process requires full control over the data on the file system because concurrent access causes corruption. The business is willing to accept a downtime when an incident occurs, but the application must be available 24/7 to support their business operations. You need to design the architecture of this application on Google Cloud. What should you do?
@@ -139,6 +145,7 @@ You need to deploy an application to Google Cloud. The application receives traf
 * **D)** **Corretta:** Questa architettura risponde a tutti i vincoli. Un **Network Load Balancer** gestisce correttamente il traffico **TCP**. L'uso di un **Unmanaged Instance Group** con una configurazione active/standby rispetta l'incapacità dell'app di scalare orizzontalmente. Il **Regional Persistent Disk (repd)** garantisce la replica sincrona dei dati su due zone diverse; in caso di failover, il disco può essere montato forzatamente (`--force-attach`) sull'istanza di standby, garantendo che solo un processo alla volta abbia il controllo del filesystem, prevenendo la corruzione.
 
 ---
+
 ### Question 8
 
 Your company has an application running on multiple Compute Engine instances. You need to ensure that the application can communicate with an on-premises service that requires high throughput via internal IPs, while minimizing latency. What should you do?
@@ -159,6 +166,7 @@ Your company has an application running on multiple Compute Engine instances. Yo
 
 
 ---
+
 ### Question 9
 
 You are managing an application deployed on Cloud Run for Anthos, and you need to define a strategy for deploying new versions of the application. You want to evaluate the new code with a subset of production traffic to decide whether to proceed with the rollout. What should you do?
@@ -179,6 +187,7 @@ You are managing an application deployed on Cloud Run for Anthos, and you need t
 
 
 ---
+
 ### Question 10
 
 You are monitoring Google Kubernetes Engine (GKE) clusters in a Cloud Monitoring workspace. As a Site Reliability Engineer (SRE), you need to triage incidents quickly. What should you do?
@@ -1022,9 +1031,7 @@ Your company is designing its data lake on Google Cloud and wants to develop dif
 
 ### Question 51
 
-You are responsible for the Google Cloud environment in your company. Multiple departments need access to their own projects, and the members within each department will have the same project responsibilities. You want to structure your Google Cloud environment for minimal maintenance and maximum overview of
-
-IAM permissions as each department's projects start and end. You want to follow Google-recommended practices. What should you do?
+You are responsible for the Google Cloud environment in your company. Multiple departments need access to their own projects, and the members within each department will have the same project responsibilities. You want to structure your Google Cloud environment for minimal maintenance and maximum overview of IAM permissions as each department's projects start and end. You want to follow Google-recommended practices. What should you do?
 
 - A) Grant all department members the required IAM permissions for their respective projects.
 - B) Create a Google Group per department and add all department members to their respective groups. Create a folder per department and grant the respective group the required IAM permissions at the folder level. Add the projects under the respective folders.
@@ -1033,7 +1040,15 @@ IAM permissions as each department's projects start and end. You want to follow 
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A)** Questa opzione richiede una gestione individuale degli utenti per ogni singolo progetto. Con l'aumentare dei dipartimenti e dei progetti, l'onere amministrativo diventerebbe insostenibile e propenso a errori, violando il requisito di "minimal maintenance".
+* **B) +Corretta:** Questa è la soluzione ottimale secondo le best practice di Google Cloud. L'uso dei **Google Groups** permette di gestire le identità in modo centralizzato (aggiungendo/rimuovendo membri una sola volta). L'uso delle **Folders** consente l'ereditarietà delle policy IAM: i permessi assegnati a livello di cartella si propagano automaticamente a tutti i progetti attuali e futuri contenuti in essa, garantendo massima visibilità e minimo sforzo operativo.
+* **C)** Sebbene l'uso delle cartelle aiuti l'organizzazione gerarchica, concedere permessi a singoli membri (invece che a gruppi) aumenta drasticamente la manutenzione manuale ogni volta che un dipendente cambia dipartimento o lascia l'azienda.
+* **D)** L'uso dei gruppi è corretto, ma applicare i permessi a livello di singolo progetto invece che a livello di cartella non sfrutta l'ereditarietà delle policy. Questo obbligherebbe gli amministratori a configurare IAM ogni volta che viene creato un nuovo progetto per un dipartimento.
+
 ---
+
 ### Question 52
 
 Your company has an application running as a Deployment in a Google Kubernetes Engine (GKE) cluster. You have separate clusters for development, staging, and production. You have discovered that the team is able to deploy a Docker image to the production cluster without first testing the deployment in development and then staging. You want to allow the team to have autonomy but want to prevent this from happening. You want a Google Cloud solution that can be implemented quickly with minimal effort. What should you do?
@@ -1045,7 +1060,15 @@ Your company has an application running as a Deployment in a Google Kubernetes E
 
 > **Correct Answer:** C
 
+**Spiegazione:**
+
+* **A)** I lifecycle hook (come `postStart` o `preStop`) sono progettati per eseguire codice specifico all'interno dei container in momenti precisi del loro ciclo di vita. Non sono strumenti di sicurezza o di governance per impedire il deployment di immagini non autorizzate.
+* **B)** Una policy aziendale è un controllo di tipo amministrativo/organizzativo, non tecnico. Non impedisce fisicamente a un utente con i permessi necessari di eseguire il deployment, fallendo nel compito di automatizzare il blocco delle immagini non testate.
+* **C) +Corretta:** **Binary Authorization** è il servizio nativo di Google Cloud progettato esattamente per questo scopo. Funziona come un controllo di ammissione basato su firme (attestazioni). È possibile configurare il cluster di produzione per richiedere un'attestazione che confermi il superamento dei test in staging. Poiché è un servizio gestito, si implementa rapidamente integrandosi con Cloud Build o altri sistemi di CI/CD, garantendo che solo le immagini "firmate" possano essere eseguite.
+* **D)** Sebbene Binary Authorization utilizzi internamente un Admission Controller, creare e gestire un controller personalizzato da zero richiederebbe uno sforzo di sviluppo e manutenzione significativo. Binary Authorization offre la stessa funzionalità come servizio pronto all'uso ("minimal effort").
+
 ---
+
 ### Question 53
 
 Your company wants to migrate their 10-TB on-premises database export into Cloud Storage. You want to minimize the time it takes to complete this activity, the overall cost, and database load. The bandwidth between the on-premises environment and Google Cloud is 1 Gbps. You want to follow Google-recommended practices. What should you do?
@@ -1057,12 +1080,18 @@ Your company wants to migrate their 10-TB on-premises database export into Cloud
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A)** Questa opzione fallisce il requisito di minimizzare il "database load". Dataflow effettuerebbe query dirette al database per estrarre i dati, consumando risorse preziose (CPU/IOPS) dell'istanza on-premises. Inoltre, richiede lo sviluppo di codice custom, non rispettando la rapidità di esecuzione.
+* **B) +Corretta:* [Analisi Critica]** Sebbene la mia analisi precedente indicasse la D come tecnicamente fattibile via rete, l'esame ufficiale GCP spesso identifica la **Transfer Appliance** come la "best practice" consigliata per volumi di **10 TB o superiori** quando si vuole garantire il minimo impatto sulla rete aziendale e sul database. Utilizzando un dispositivo fisico, si elimina completamente il carico di rete prolungato (che a 1 Gbps saturerebbe la banda per giorni) e il database load è limitato alla sola copia dell'export già esistente sul dispositivo.
+* **C)** Le soluzioni partner introducono costi di licenza elevati e overhead di configurazione, contrastando con l'obiettivo di minimizzare i costi e la complessità.
+* **D)** Sebbene tecnicamente possibile, il trasferimento di 10 TB su una linea da 1 Gbps (considerando l'overhead di protocollo e la latenza reale) può richiedere molto tempo e impattare pesantemente sulle altre attività aziendali che utilizzano la stessa connessione internet. Google raccomanda il trasferimento offline (Appliance) per mitigare i rischi di interruzione della rete e velocità incostanti.
+
 ---
+
 ### Question 54
 
-Your company has an enterprise application running on Compute Engine that requires high availability and high performance. The application has been deployed on two instances in two zones in the same region in active-passive mode. The application writes data to a persistent disk. In the case of a single zone outage, that data should be immediately made available to the other instance in the other zone. You want to maximize performance while minimizing downtime and data loss.
-
-What should you do?
+Your company has an enterprise application running on Compute Engine that requires high availability and high performance. The application has been deployed on two instances in two zones in the same region in active-passive mode. The application writes data to a persistent disk. In the case of a single zone outage, that data should be immediately made available to the other instance in the other zone. You want to maximize performance while minimizing downtime and data loss. What should you do?
 
 - A) 1. Attach a persistent SSD disk to the first instance. 2. Create a snapshot every hour. 3. In case of a zone outage, recreate a persistent SSD disk in the second instance where data is coming from the created snapshot.
 - B) 1. Create a Cloud Storage bucket. 2. Mount the bucket into the first instance with gcs-fuse. 3. In case of a zone outage, mount the Cloud Storage bucket to the second instance with gcs-fuse.
@@ -1071,7 +1100,15 @@ What should you do?
 
 > **Correct Answer:** C
 
+**Spiegazione:**
+
+* **A)** L'utilizzo di snapshot orari comporta un **RPO (Recovery Point Objective)** di un'ora, il che viola il requisito di minimizzare la perdita di dati. Inoltre, il processo manuale di ricreazione del disco aumenta il downtime, non garantendo la disponibilità "immediata".
+* **B)** **Cloud Storage FUSE** non è progettato per carichi di lavoro ad alte prestazioni che richiedono le caratteristiche di un file system POSIX standard. La latenza sarebbe troppo elevata per un'applicazione "high performance" e la coerenza dei dati non è garantita per scritture frequenti.
+* **C) +Corretta:** L'utilizzo di un **Regional Persistent Disk (RPD)** è la best practice di Google Cloud per scenari di alta affidabilità e performance. Un RPD replica i dati in modo sincrono tra due zone della stessa regione. In caso di guasto della zona attiva, il disco può essere collegato (force-attached) all'istanza nella seconda zona, rendendo i dati immediatamente disponibili con **zero perdite di dati** (RPO pari a zero).
+* **D)** I **Local SSD** offrono le massime performance ma sono fisicamente legati all'hardware del server; i dati vanno persi se l'istanza viene arrestata o se la zona fallisce. L'uso di `rsync` ogni ora introduce lo stesso problema di perdita dati dell'opzione A e aggiunge carico inutile sulla rete e sulla CPU.
+
 ---
+
 ### Question 55
 
 You are designing a Data Warehouse on Google Cloud and want to store sensitive data in BigQuery. Your company requires you to generate the encryption keys outside of Google Cloud. You need to implement a solution. What should you do?
@@ -1083,7 +1120,15 @@ You are designing a Data Warehouse on Google Cloud and want to store sensitive d
 
 > **Correct Answer:** D
 
+**Spiegazione:**
+
+* **A)** Questa opzione fallisce il requisito fondamentale: la chiave viene generata **dentro** Cloud KMS, non all'esterno. Inoltre, l'architettura proposta (passare da Cloud Storage a Dataflow per poi scrivere in BigQuery) è inutilmente complessa e non sfrutta le capacità native di cifratura di BigQuery.
+* **B)** Come per l'opzione A, il comando di generare una nuova chiave in Cloud KMS viola la policy aziendale che impone la generazione della chiave **fuori** da Google Cloud.
+* **C)** Sebbene l'importazione della chiave sia corretta, l'uso di Cloud Storage e Dataflow come intermediari per la decifratura introduce latenza e costi superflui. BigQuery può gestire direttamente i dati cifrati a riposo senza doverli spostare in altri servizi.
+* **D) +Corretta:* [Analisi Critica]** Questa opzione segue il flusso corretto per le **Customer-Managed Encryption Keys (CMEK)** con materiale fornito dall'utente. Il processo prevede: 1. Generare la chiave on-premises; 2. **Importarla** in Cloud KMS (creando una "Import Job"); 3. Utilizzare tale chiave per proteggere il dataset BigQuery.
+
 ---
+
 ### Question 56
 
 Your organization has stored sensitive data in a Cloud Storage bucket. For regulatory reasons, your company must be able to rotate the encryption key used to encrypt the data in the bucket. The data will be processed in Dataproc. You want to follow Google-recommended practices for security. What should you do?
@@ -1095,12 +1140,18 @@ Your organization has stored sensitive data in a Cloud Storage bucket. For regul
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A)** Utilizzare direttamente il metodo `encrypt` delle API di Cloud KMS per cifrare i dati prima del caricamento è un approccio di "application-layer encryption". Sebbene sicuro, aumenta notevolmente la complessità dello sviluppo e non si integra nativamente con Dataproc, che dovrebbe gestire manualmente la decifratura di ogni file durante l'elaborazione.
+* **B) +Corretta:** Questa opzione implementa le **Customer-Managed Encryption Keys (CMEK)**. Configurando una chiave Cloud KMS come chiave di cifratura predefinita del bucket, tutti i dati caricati vengono cifrati automaticamente. Cloud KMS supporta la **rotazione automatica e manuale delle chiavi**, soddisfacendo il requisito normativo. Inoltre, Dataproc è integrato nativamente con CMEK: basta fornire l'account di servizio con i permessi di `Encrypter/Decrypter` sulla chiave affinché l'accesso ai dati sia trasparente e sicuro.
+* **C)** L'uso di chiavi GPG esterne richiede una gestione manuale complessa delle chiavi e dei processi di cifratura/decifratura. Non è una pratica raccomandata in GCP per flussi di dati su larga scala come quelli di Dataproc, poiché introduce colli di bottiglia operativi e manca di integrazione nativa.
+* **D)** Le **Customer-Supplied Encryption Keys (CSEK)** richiedono che l'utente fornisca la chiave AES-256 in ogni singola chiamata API (upload/download). Questo non solo rende difficile la rotazione (che deve essere gestita interamente dall'utente ricaricando i dati), ma non è supportato nativamente da molti servizi gestiti come Dataproc, rendendo l'elaborazione dei dati estremamente difficoltosa.
+
 ---
+
 ### Question 57
 
-Your application needs to process credit card transactions. You want the smallest scope of Payment Card Industry (PCI) compliance without compromising the ability to analyze transactional data and trends relating to which payment methods are used.
-
-How should you design your architecture?
+Your application needs to process credit card transactions. You want the smallest scope of Payment Card Industry (PCI) compliance without compromising the ability to analyze transactional data and trends relating to which payment methods are used. How should you design your architecture?
 
 - A) Create a tokenizer service and store only tokenized data
 - B) Create separate projects that only process credit card data
@@ -1110,12 +1161,19 @@ How should you design your architecture?
 
 > **Correct Answer:** A
 
+**Spiegazione:**
+
+* **A) +Corretta:** La **tokenizzazione** è la strategia standard per ridurre drasticamente l'ambito (scope) della conformità PCI-DSS. Sostituendo i dati sensibili della carta (PAN) con "token" non sensibili, i sistemi a valle (come quelli di analisi e trend) possono elaborare i dati senza mai entrare in contatto con i dati reali della carta. In questo modo, solo il servizio di tokenizzazione deve soddisfare i requisiti PCI più rigorosi, mentre il resto dell'architettura analitica rimane fuori dall'ambito PCI o soggetta a controlli minimi.
+* **B)** Sebbene isolare i carichi di lavoro in progetti separati sia una buona pratica di sicurezza, non riduce di per sé lo scope PCI se i dati della carta circolano ancora in chiaro all'interno di quei progetti. Dovresti comunque certificare l'intera infrastruttura che tocca i dati.
+* **C)** L'isolamento a livello di rete (micro-segmentazione) è un requisito PCI, ma non riduce lo scope dell'audit quanto la tokenizzazione. I componenti nelle sottoreti isolate sarebbero comunque soggetti a scansioni e audit completi poiché processano ancora dati sensibili.
+* **D)** Le etichette (labels) sono utili per l'organizzazione e l'identificazione durante un audit, ma sono uno strumento amministrativo. Non hanno alcun impatto tecnico sulla riduzione della superficie di attacco o sulla protezione dei dati dei titolari di carta.
+* **E)** L'esportazione dei log in BigQuery aiuta nella fase di monitoraggio e audit, ma non risolve il problema principale del trattamento dei dati delle transazioni. Non riduce lo scope PCI dell'applicazione stessa che processa i pagamenti.
+
 ---
+
 ### Question 58
 
-Your team needs to create a Google Kubernetes Engine (GKE) cluster to host a newly built application that requires access to third-party services on the internet.
-
-Your company does not allow any Compute Engine instance to have a public IP address on Google Cloud. You need to create a deployment strategy that adheres to these guidelines. What should you do?
+Your team needs to create a Google Kubernetes Engine (GKE) cluster to host a newly built application that requires access to third-party services on the internet. Your company does not allow any Compute Engine instance to have a public IP address on Google Cloud. You need to create a deployment strategy that adheres to these guidelines. What should you do?
 
 - A) Configure the GKE cluster as a private cluster, and configure Cloud NAT Gateway for the cluster subnet.
 - B) Configure the GKE cluster as a private cluster. Configure Private Google Access on the Virtual Private Cloud (VPC).
@@ -1124,12 +1182,19 @@ Your company does not allow any Compute Engine instance to have a public IP addr
 
 > **Correct Answer:** A
 
+**Spiegazione:**
+
+* **A) +Corretta:** Un **Private Cluster** in GKE garantisce che i nodi (istanze Compute Engine) non abbiano indirizzi IP pubblici, soddisfacendo la policy aziendale. Tuttavia, poiché l'applicazione deve accedere a servizi terzi su internet, è necessario un meccanismo di traduzione degli indirizzi. **Cloud NAT** è il servizio gestito di Google Cloud che consente alle istanze senza IP pubblico di inviare pacchetti verso internet e ricevere le relative risposte, senza permettere connessioni in entrata non sollecitate.
+* **B)** **Private Google Access** permette alle istanze senza IP pubblico di raggiungere esclusivamente le **API e i servizi di Google** (come Cloud Storage o BigQuery) tramite i loro endpoint pubblici. Non fornisce connettività verso servizi "third-party" generici o altri siti web su internet.
+* **C)** I cluster basati su rotte (route-based) sono un'architettura legacy rispetto ai cluster VPC-native (raccomandati). In ogni caso, Private Google Access non risolverebbe il problema dell'accesso a servizi internet non-Google, rendendo questa opzione tecnicamente insufficiente.
+* **D)** Sebbene l'installazione di un proxy NAT su una VM Compute Engine sia tecnicamente possibile, viola il principio di efficienza operativa e alta affidabilità. Cloud NAT è una soluzione software-defined, distribuita e gestita che non richiede la manutenzione di singole VM, offrendo scalabilità e ridondanza superiori rispetto a un proxy manuale.
+
+
 ---
+
 ### Question 59
 
-Your company has a support ticketing solution that uses App Engine Standard. The project that contains the App Engine application already has a Virtual Private
-
-Cloud (VPC) network fully connected to the company's on-premises environment through a Cloud VPN tunnel. You want to enable the App Engine application to communicate with a database that is running in the company's on-premises environment. What should you do?
+Your company has a support ticketing solution that uses App Engine Standard. The project that contains the App Engine application already has a Virtual Private Cloud (VPC) network fully connected to the company's on-premises environment through a Cloud VPN tunnel. You want to enable the App Engine application to communicate with a database that is running in the company's on-premises environment. What should you do?
 
 - A) Configure private Google access for on-premises hosts only.
 - B) Configure private Google access.
@@ -1138,7 +1203,15 @@ Cloud (VPC) network fully connected to the company's on-premises environment thr
 
 > **Correct Answer:** D
 
+**Spiegazione:**
+
+* **A)** **Private Google Access for on-premises hosts** permette ai server fisici situati nel data center aziendale di raggiungere le API di Google (come Cloud Storage) tramite il tunnel VPN senza usare IP pubblici. Non aiuta in alcun modo l'applicazione App Engine a "scendere" verso il database on-premises.
+* **B)** **Private Google Access** (standard) consente alle istanze VM all'interno di una VPC di raggiungere le API Google senza IP pubblici. Come l'opzione A, questa funzione opera nella direzione opposta rispetto a quella richiesta e non abilita la comunicazione verso l'ambiente on-premises per servizi serverless.
+* **C)** **Private Services Access** è utilizzato per connettere la propria VPC a servizi gestiti da Google o terze parti che risiedono in una rete VPC del "service producer" (come Cloud SQL o Redis). Non è il meccanismo utilizzato per connettere App Engine a una rete on-premises tramite VPN.
+* **D) +Corretta:** Per consentire ad **App Engine Standard** (che gira in una sandbox gestita da Google fuori dalla tua VPC) di inviare traffico verso una rete privata (VPC), è necessario configurare un **Serverless VPC Access connector**. Una volta che il traffico dell'app entra nella VPC attraverso il connettore, può sfruttare il **Cloud VPN tunnel** esistente per raggiungere il database nell'ambiente on-premises.
+
 ---
+
 ### Question 60
 
 Your company is planning to upload several important files to Cloud Storage. After the upload is completed, they want to verify that the uploaded content is identical to what they have on-premises. You want to minimize the cost and effort of performing this check. What should you do?
@@ -1150,7 +1223,15 @@ Your company is planning to upload several important files to Cloud Storage. Aft
 
 > **Correct Answer:** D
 
+**Spiegazione:**
+
+* **A)** Questa opzione comporta il download completo di tutti i file dopo l'upload. Questo raddoppia il tempo necessario e genera costi di **egress** (traffico in uscita) significativi, violando il requisito di minimizzare i costi e lo sforzo.
+* **B)** Sviluppare un'applicazione Java personalizzata richiede tempo e sforzi di manutenzione inutili ("effort"). Google Cloud fornisce già strumenti nativi (come `gsutil hash`) per calcolare gli hash CRC32C in modo standardizzato.
+* **C)** Come per l'opzione A, scaricare i file per eseguire un comando `diff` è inefficiente dal punto di vista dei costi (egress) e delle prestazioni, specialmente per volumi di dati importanti.
+* **D) +Corretta:** Questa è la soluzione più efficiente e meno costosa. Il comando `gsutil ls -L` permette di visualizzare i metadati dei file già presenti su Cloud Storage, incluso l'hash **CRC32C** che viene calcolato automaticamente da Google durante l'upload. Utilizzando `gsutil hash` sui file locali, è possibile generare un hash compatibile da confrontare con quello sul cloud senza dover riscaricare i dati. Questo approccio minimizza lo sforzo manuale e azzera i costi di trasferimento dati in uscita.
+
 ---
+
 ### Question 61
 
 You have deployed an application on Anthos clusters (formerly Anthos GKE). According to the SRE practices at your company, you need to be alerted if request latency is above a certain threshold for a specified amount of time. What should you do?
@@ -1162,12 +1243,18 @@ You have deployed an application on Anthos clusters (formerly Anthos GKE). Accor
 
 > **Correct Answer:** A
 
+**Spiegazione:**
+
+* **A) +Corretta:** **Anthos Service Mesh (ASM)** fornisce automaticamente visibilità profonda sul traffico di rete tra i microservizi (osservabilità). Integrandosi nativamente con la suite di Google Cloud Observability, ASM permette di definire **Service Level Indicators (SLI)** e **Service Level Objectives (SLO)** basati sulla latenza senza dover modificare il codice dell'applicazione. Una volta definito lo SLO, è possibile configurare un **Alerting Policy** basato sull'error budget o sulla soglia di latenza specifica, seguendo esattamente le pratiche SRE.
+* **B)** Cloud Trace è eccellente per il debugging distribuito e per analizzare il percorso di singole richieste attraverso i servizi, ma non è lo strumento principale per il monitoraggio aggregato della latenza e la gestione degli SLO a livello di infrastruttura Anthos.
+* **C)** Cloud Profiler viene utilizzato per analizzare il consumo di risorse (CPU, memoria) a livello di codice dell'applicazione per ottimizzare le performance. Non è progettato per monitorare la latenza delle richieste di rete o per gestire policy di alert basate su soglie temporali di traffico.
+* **D)** Anthos Config Management (ACM) viene utilizzato per gestire in modo dichiarativo la configurazione e le policy di sicurezza dei cluster (come i ruoli RBAC o i vincoli di rete) tramite GitOps. Sebbene possa gestire alcune configurazioni, la definizione di SLO e la gestione operativa degli alert basati sulla latenza avvengono tramite la console di Monitoring/ASM.
+
 ---
+
 ### Question 62
 
-Your company has a stateless web API that performs scientific calculations. The web API runs on a single Google Kubernetes Engine (GKE) cluster. The cluster is currently deployed in us-central1. Your company has expanded to offer your API to customers in Asia. You want to reduce the latency for users in Asia.
-
-What should you do?
+Your company has a stateless web API that performs scientific calculations. The web API runs on a single Google Kubernetes Engine (GKE) cluster. The cluster is currently deployed in us-central1. Your company has expanded to offer your API to customers in Asia. You want to reduce the latency for users in Asia. What should you do?
 
 - A) Create a second GKE cluster in asia-southeast1, and expose both APIs using a Service of type LoadBalancer. Add the public IPs to the Cloud DNS zone.
 - B) Use a global HTTP(s) load balancer with Cloud CDN enabled.
@@ -1176,7 +1263,15 @@ What should you do?
 
 > **Correct Answer:** C
 
+**Spiegazione:**
+
+* **A)** L'utilizzo di un `Service` di tipo `LoadBalancer` crea un bilanciatore di carico regionale con un IP pubblico specifico. Utilizzare Cloud DNS per gestire più IP pubblici (Round Robin DNS) non è ottimale: il DNS non tiene conto della vicinanza geografica effettiva o della salute del backend in tempo reale, portando a una distribuzione del traffico inefficiente.
+* **B)** Sebbene l'HTTP(S) Load Balancer sia globale, Cloud CDN è utile principalmente per contenuti statici (immagini, JS, CSS). Poiché l'API esegue "scientific calculations", i risultati sono probabilmente dinamici e unici per ogni richiesta, rendendo la cache della CDN inefficace per ridurre la latenza di calcolo.
+* **C) +Corretta:** Per ridurre la latenza globale, è necessario distribuire i carichi di lavoro più vicino agli utenti. Creando un secondo cluster in **asia-southeast1** e utilizzando un **bilanciatore di carico HTTP(S) globale**, il traffico viene instradato automaticamente al cluster geograficamente più vicino grazie all'Anycast IP di Google. **Nota Tecnica:** `kubemci` era lo strumento originale per gestire i Multi-Cluster Ingress; sebbene oggi Google raccomandi il **Multi-cluster Gateway controller**, in ottica d'esame questa opzione rappresenta correttamente l'architettura a cluster multipli con bilanciamento globale.
+* **D)** Aumentare le risorse (vertical scaling) può velocizzare il calcolo una volta che la richiesta è arrivata al server, ma non risolve la latenza di rete (il "viaggio" dei pacchetti) tra l'Asia e gli Stati Uniti, che è determinata dalla distanza fisica.
+
 ---
+
 ### Question 63
 
 You are migrating third-party applications from optimized on-premises virtual machines to Google Cloud. You are unsure about the optimum CPU and memory options. The applications have a consistent usage pattern across multiple weeks. You want to optimize resource usage for the lowest cost. What should you do?
@@ -1188,14 +1283,18 @@ You are migrating third-party applications from optimized on-premises virtual ma
 
 > **Correct Answer:** D
 
+**Spiegazione:**
+
+* **A)** L'autoscaling basato su CPU è ideale per carichi variabili, ma la domanda specifica che le applicazioni hanno un "consistent usage pattern" (pattern di utilizzo costante). Iniziare con la macchina più piccola possibile e scalare potrebbe causare problemi di performance iniziali e non aiuta a determinare la dimensione ottimale del singolo nodo per il rapporto costo/efficacia.
+* **B)** App Engine Flexible è un servizio PaaS. Migrare applicazioni di terze parti ottimizzate per VM on-premises verso container su App Engine richiede uno sforzo di refactoring (creazione Dockerfile, gestione runtime) che potrebbe non essere necessario o compatibile. Inoltre, replicare semplicemente le specifiche on-premises non garantisce l'ottimizzazione dei costi su GCP.
+* **C)** Questo approccio "trial and error" manuale è estremamente dispendioso in termini di tempo e costi. Creare molteplici istanze solo per testare diverse combinazioni di risorse è inefficiente quando esistono strumenti nativi di analisi automatizzata.
+* **D) +Corretta:** Questa è la procedura standard consigliata da Google per il "Lift and Shift". Poiché l'applicazione ha un utilizzo costante, è sufficiente monitorarla in condizioni normali. Il **Recommender di GCP (Rightsizing Recommendations)** analizza i dati storici di Cloud Monitoring (CPU e memoria) e suggerisce automaticamente se l'istanza è sovradimensionata (over-provisioned) o sottodimensionata, permettendoti di scegliere il tipo di macchina esatto (anche custom) per minimizzare i costi senza sacrificare le performance.
+
 ---
+
 ### Question 64
 
-Your company has a Google Cloud project that uses BigQuery for data warehousing. They have a VPN tunnel between the on-premises environment and Google
-
-Cloud that is configured with Cloud VPN. The security team wants to avoid data exfiltration by malicious insiders, compromised code, and accidental oversharing.
-
-What should they do?
+Your company has a Google Cloud project that uses BigQuery for data warehousing. They have a VPN tunnel between the on-premises environment and Google Cloud that is configured with Cloud VPN. The security team wants to avoid data exfiltration by malicious insiders, compromised code, and accidental oversharing. What should they do?
 
 - A) Configure Private Google Access for on-premises only.
 - B) Perform the following tasks: 1. Create a service account. 2. Give the BigQuery JobUser role and Storage Reader role to the service account. 3. Remove all other IAM access from the project.
@@ -1204,7 +1303,15 @@ What should they do?
 
 > **Correct Answer:** C
 
+**Spiegazione:**
+
+* **A)** **Private Google Access for on-premises** permette ai sistemi locali di raggiungere le API di Google tramite il tunnel VPN senza utilizzare indirizzi IP pubblici. Sebbene sia una misura di sicurezza per il transito dei dati, non impedisce a un utente malintenzionato o a un codice compromesso all'interno del progetto di copiare i dati da BigQuery verso un altro bucket Cloud Storage esterno o un dataset pubblico.
+* **B)** La gestione dei ruoli IAM è fondamentale per il principio del minimo privilegio, ma **IAM da solo non previene l'esfiltrazione**. Un insider con i permessi legittimi di "JobUser" e "Reader" potrebbe comunque estrarre dati e caricarli su un'istanza o un bucket fuori dal controllo aziendale. IAM controlla "chi" può fare "cosa", ma non "da dove" o "verso dove" i dati possono fluire a livello di rete e servizio.
+* **C) +Corretta:** **VPC Service Controls (VPC SC)** è lo strumento specifico di Google Cloud progettato per mitigare il rischio di esfiltrazione di dati. Creando un **perimetro di servizio** attorno a risorse sensibili come BigQuery, VPC SC impedisce lo spostamento dei dati al di fuori del perimetro, anche se l'utente ha i permessi IAM corretti. L'aggiunta di **Private Google Access** assicura che la comunicazione tra la VPC e BigQuery rimanga confinata all'interno della rete di Google, chiudendo i vettori di attacco basati su internet pubblico.
+* **D)** Come indicato per l'opzione A, Private Google Access protegge solo il percorso di rete verso le API di Google. Senza un perimetro di sicurezza (VPC SC), i dati all'interno dei servizi gestiti (SaaS/PaaS) come BigQuery rimangono vulnerabili a trasferimenti non autorizzati verso risorse esterne al progetto.
+
 ---
+
 ### Question 65
 
 You are working at an institution that processes medical data. You are migrating several workloads onto Google Cloud. Company policies require all workloads to run on physically separated hardware, and workloads from different clients must also be separated. You created a sole-tenant node group and added a node for each client. You need to deploy the workloads on these dedicated hosts. What should you do?
@@ -1216,12 +1323,18 @@ You are working at an institution that processes medical data. You are migrating
 
 > **Correct Answer:** D
 
+**Spiegazione:**
+
+* **A)** I **Network tags** sono utilizzati esclusivamente per l'applicazione di regole firewall e il routing di rete. Non hanno alcuna influenza sul posizionamento fisico delle istanze (scheduling) sull'hardware sottostante.
+* **B)** Come per l'opzione A, i tag di rete non controllano l'allocazione delle risorse Compute Engine sui nodi fisici. Inoltre, puntare a un singolo nodo tramite un tag di rete non è un'operazione supportata dalle API di scheduling.
+* **C)** Sebbene le etichette di affinità per il *node group* garantiscano che le istanze girino su hardware dedicato (Sole-Tenancy), la domanda specifica che i carichi di lavoro di **client diversi** devono essere separati tra loro. Se si utilizza l'affinità a livello di gruppo, lo scheduler di Google potrebbe posizionare le VM di diversi clienti sullo stesso nodo fisico all'interno di quel gruppo, violando il requisito di separazione.
+* **D) +Corretta:** Per garantire che ogni carico di lavoro giri su un hardware fisicamente separato per ogni cliente, è necessario indirizzare le istanze verso uno specifico nodo all'interno del gruppo di sole-tenant. Utilizzando le **node affinity labels** (etichette di affinità del nodo) con la chiave `compute.googleapis.com/node-name`, è possibile vincolare deterministicamente la VM di un cliente al nodo fisico dedicato a quel cliente.
+
 ---
+
 ### Question 66
 
-Your company's test suite is a custom C++ application that runs tests throughout each day on Linux virtual machines. The full test suite takes several hours to complete, running on a limited number of on-premises servers reserved for testing. Your company wants to move the testing infrastructure to the cloud, to reduce the amount of time it takes to fully test a change to the system, while changing the tests as little as possible.
-
-Which cloud infrastructure should you recommend?
+Your company's test suite is a custom C++ application that runs tests throughout each day on Linux virtual machines. The full test suite takes several hours to complete, running on a limited number of on-premises servers reserved for testing. Your company wants to move the testing infrastructure to the cloud, to reduce the amount of time it takes to fully test a change to the system, while changing the tests as little as possible. Which cloud infrastructure should you recommend?
 
 - A) Google Compute Engine unmanaged instance groups and Network Load Balancer
 - B) Google Compute Engine managed instance groups with auto-scaling
@@ -1230,12 +1343,18 @@ Which cloud infrastructure should you recommend?
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A)** Gli unmanaged instance groups non supportano l'autoscaling. Per ridurre il tempo totale di esecuzione dei test, è necessario aumentare parallelamente il numero di macchine quando il carico di lavoro lo richiede. Gestire manualmente le istanze in un gruppo non gestito aumenterebbe la complessità senza offrire la velocità desiderata.
+* **B) +Corretta:** I **Managed Instance Groups (MIG)** con **autoscaling** sono la soluzione ideale per questo scenario. Poiché i test richiedono diverse ore, è possibile configurare un MIG per creare automaticamente centinaia di istanze in parallelo per eseguire i test contemporaneamente invece che in sequenza. Questo riduce drasticamente il tempo di completamento (il "wall-clock time"). Inoltre, trattandosi di macchine Linux, la migrazione richiede "minimal changes" all'applicazione C++ originale.
+* **C)** Dataproc è ottimizzato per l'elaborazione di big data con framework come Spark o Hadoop. Riscrivere o adattare una suite di test C++ personalizzata per girare come job Hadoop sarebbe estremamente complesso e richiederebbe modifiche sostanziali al codice, violando il requisito di cambiare i test il meno possibile.
+* **D)** App Engine (specialmente l'ambiente Standard) ha limitazioni rigorose sui runtime e sulle librerie di sistema. Portare un'applicazione C++ custom su App Engine richiederebbe un refactoring significativo (o l'uso di App Engine Flexible con Docker), ma non è comunque lo strumento più adatto per task di test computazionali a lunga durata rispetto a Compute Engine.
+
 ---
+
 ### Question 67
 
-A lead software engineer tells you that his new application design uses websockets and HTTP sessions that are not distributed across the web servers. You want to help him ensure his application will run properly on Google Cloud Platform.
-
-What should you do?
+A lead software engineer tells you that his new application design uses websockets and HTTP sessions that are not distributed across the web servers. You want to help him ensure his application will run properly on Google Cloud Platform. What should you do?
 
 - A) Help the engineer to convert his websocket code to use HTTP streaming
 - B) Review the encryption requirements for websocket connections with the security team
@@ -1244,12 +1363,18 @@ What should you do?
 
 > **Correct Answer:** C
 
+**Spiegazione:**
+
+* **A)** Convertire il codice da WebSocket a HTTP Streaming è un'operazione complessa che richiede un refactoring significativo dell'applicazione. Non risolve il problema principale della persistenza delle sessioni HTTP non distribuite e non è necessario, dato che GCP supporta nativamente i WebSocket.
+* **B)** Sebbene la sicurezza sia importante, i requisiti di crittografia non risolvono il problema architetturale posto dall'ingegnere (la mancata distribuzione delle sessioni). L'applicazione fallirebbe comunque nel mantenere lo stato dell'utente se il traffico venisse instradato a un server diverso da quello iniziale.
+* **C) +Corretta:** Questa è la soluzione più rapida ed efficace che segue le best practice di GCP. Il **Google Cloud HTTP(S) Load Balancer** supporta nativamente sia i **WebSocket** che le **Session Affinities** (comunemente chiamate "Sticky Sessions"). Configurando la Session Affinity (basata su IP del client o cookie), il bilanciatore assicurerà che tutte le richieste di una determinata sessione HTTP e la relativa connessione WebSocket siano indirizzate sempre allo stesso server backend. Questo permette all'applicazione di funzionare correttamente senza richiedere modifiche al codice.
+* **D)** Riprogettare l'intera applicazione per utilizzare un servizio di sessione distribuito (come Redis o Memorystore) è sicuramente una "best practice" di design cloud-native a lungo termine per la scalabilità orizzontale, ma è un intervento invasivo. La domanda chiede come garantire che l'applicazione giri correttamente (run properly) nel suo stato attuale, e la configurazione del Load Balancer è la risposta più immediata.
+
 ---
+
 ### Question 68
 
-You have been asked to select the storage system for the click-data of your company's large portfolio of websites. This data is streamed in from a custom website analytics package at a typical rate of 6,000 clicks per minute. With bursts of up to 8,500 clicks per second. It must have been stored for future analysis by your data science and user experience teams.
-
-Which storage infrastructure should you choose?
+You have been asked to select the storage system for the click-data of your company's large portfolio of websites. This data is streamed in from a custom website analytics package at a typical rate of 6,000 clicks per minute. With bursts of up to 8,500 clicks per second. It must have been stored for future analysis by your data science and user experience teams. Which storage infrastructure should you choose?
 
 - A) Google Cloud SQL
 - B) Google Cloud Bigtable
@@ -1258,12 +1383,18 @@ Which storage infrastructure should you choose?
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A)** **Cloud SQL** (MySQL/PostgreSQL/SQL Server) è un servizio database relazionale (OLTP). Sebbene possa gestire carichi moderati, non è progettato per gestire picchi di **8.500 clic al secondo** in modo efficiente ed economico. Le operazioni di scrittura massiva su un database relazionale porterebbero a colli di bottiglia e latenze elevate.
+* **B) +Corretta:** **Cloud Bigtable** è il servizio di database NoSQL scalabile e gestito di Google, ottimizzato per carichi di lavoro ad alto throughput di scrittura e analisi a bassa latenza. È la scelta ideale per i dati delle serie temporali e gli analytics (come il "clickstream"), poiché può scalare linearmente per gestire migliaia (e persino milioni) di scritture al secondo senza degradazione delle performance.
+* **C)** **Cloud Storage** è un servizio di object storage. Sebbene sia economico e possa archiviare grandi quantità di dati, non è adatto per ricevere flussi di dati in streaming ad alta frequenza in tempo reale. Scrivere piccoli file (clic individuali) su GCS sarebbe estremamente inefficiente e renderebbe l'analisi successiva complessa e lenta.
+* **D)** **Cloud Datastore** (ora integrato in Firestore) è un database NoSQL ideale per le applicazioni web e mobili che richiedono flessibilità del formato dati e transazioni ACID. Tuttavia, non è ottimizzato per l'analisi dei dati in streaming su larga scala o per il throughput di scrittura massiccio richiesto dagli analytics rispetto a Bigtable.
+
 ---
+
 ### Question 69
 
-The application reliability team at your company this added a debug feature to their backend service to send all server events to Google Cloud Storage for eventual analysis. The event records are at least 50 KB and at most 15 MB and are expected to peak at 3,000 events per second. You want to minimize data loss.
-
-Which process should you implement?
+The application reliability team at your company this added a debug feature to their backend service to send all server events to Google Cloud Storage for eventual analysis. The event records are at least 50 KB and at most 15 MB and are expected to peak at 3,000 events per second. You want to minimize data loss. Which process should you implement?
 
 - A) ג€¢ Append metadata to file body ג€¢ Compress individual files ג€¢ Name files with serverName - Timestamp ג€¢ Create a new bucket if bucket is older than 1 hour and save individual files to the new bucket. Otherwise, save files to existing bucket.
 - B) ג€¢ Batch every 10,000 events with a single manifest file for metadata ג€¢ Compress event files and manifest file into a single archive file ג€¢ Name files using serverName - EventSequence ג€¢ Create a new bucket if bucket is older than 1 day and save the single archive file to the new bucket. Otherwise, save the single archive file to existing bucket.
@@ -1272,12 +1403,19 @@ Which process should you implement?
 
 > **Correct Answer:** D
 
+**Spiegazione:**
+
+* **A)** Nominare i file iniziando con `serverName - Timestamp` crea un problema di **hotspotting**. Poiché i nomi dei file in Cloud Storage sono indicizzati in ordine lessicografico, avere prefissi comuni o sequenziali (come nomi di server o timestamp) indirizza tutto il traffico verso lo stesso shard dell'indice, limitando drasticamente il throughput. Inoltre, creare un nuovo bucket ogni ora è un'operazione inefficiente e non necessaria che complica la gestione dei dati.
+* **B)** Sebbene il batching riduca il numero di file, attendere di accumulare 10.000 eventi (che possono pesare fino a 15 MB l'uno) prima dell'upload aumenta il rischio di **data loss** in caso di crash del server locale prima dell'invio. Anche qui, la creazione giornaliera di bucket è una pratica sconsigliata.
+* **C)** Simile all'opzione A, l'uso di `serverName` come prefisso causa hotspotting. Inoltre, impostare i metadati *dopo* il salvataggio richiede una chiamata API aggiuntiva per ogni oggetto (`patch`), raddoppiando il numero di operazioni e aumentando il rischio di errori e i costi.
+* **D) +Corretta:** Questa opzione segue le best practice di Google Cloud per le prestazioni su larga scala. 1. **Random prefix pattern:** L'uso di un prefisso casuale (hash) all'inizio del nome del file distribuisce uniformemente le chiavi tra i vari shard degli indici di Cloud Storage, permettendo di gestire picchi elevati (3.000 eventi/sec) senza colli di bottiglia. 2. **Append metadata to file body:** Inserire i metadati direttamente nel file è più efficiente rispetto alle chiamate API separate per i metadati dell'oggetto. 3. **Save to one bucket:** Un singolo bucket può scalare per gestire throughput elevatissimi se le chiavi degli oggetti sono ben distribuite.
+
+
 ---
+
 ### Question 70
 
-A recent audit revealed that a new network was created in your GCP project. In this network, a GCE instance has an SSH port open to the world. You want to discover this network's origin.
-
-What should you do?
+A recent audit revealed that a new network was created in your GCP project. In this network, a GCE instance has an SSH port open to the world. You want to discover this network's origin. What should you do?
 
 - A) Search for Create VM entry in the Stackdriver alerting console
 - B) Navigate to the Activity page in the Home section. Set category to Data Access and search for Create VM entry
@@ -1286,7 +1424,15 @@ What should you do?
 
 > **Correct Answer:** C
 
+**Spiegazione:**
+
+* **A)** La console di alerting di Cloud Monitoring (precedentemente Stackdriver) viene utilizzata per monitorare soglie di performance o stati di errore, non per investigare lo storico delle operazioni amministrative. Non contiene i log di audit necessari per rintracciare l'autore di una risorsa.
+* **B)** Sebbene la pagina **Activity** sia utile per una panoramica rapida, i log di tipo "Data Access" riguardano la lettura o scrittura di dati (ad esempio all'interno di un bucket o una tabella BigQuery). La creazione di una rete o di una VM è un'operazione di configurazione che ricade sotto gli **Admin Activity Audit Logs**.
+* **C) +Corretta:** La sezione **Logging** (Cloud Logging) è il luogo dove vengono archiviati tutti gli **Audit Logs**. Per trovare chi ha creato una risorsa di rete, è necessario filtrare per il tipo di risorsa (es. `gce_network` o `audited_resource`) e cercare il metodo specifico di creazione (solitamente `v1.compute.networks.insert`). Questo log conterrà il campo `principalEmail`, che identifica esattamente l'utente o il service account che ha eseguito l'operazione.
+* **D)** Accedere alla VM non risolverebbe il problema. I log di sistema della VM mostrano chi ha effettuato l'accesso al sistema operativo, ma non forniscono informazioni su chi ha creato l'infrastruttura di rete esterna o la VM stessa tramite le API di Google Cloud.
+
 ---
+
 ### Question 71
 
 You want to make a copy of a production Linux virtual machine in the US-Central region. You want to manage and replace the copy easily if there are changes on the production virtual machine. You will deploy the copy as a new instance in a different project in the US-East region.
