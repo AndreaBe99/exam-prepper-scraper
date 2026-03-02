@@ -1839,6 +1839,13 @@ Your operations team currently stores 10 TB of data in an object storage service
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A) -Errata:** L'utilizzo di `gsutil mv` richiede la gestione manuale di un'istanza di calcolo, la configurazione del throughput e non offre la resilienza o la scalabilità automatica necessarie per 10 TB. Inoltre, il comando `mv` (move) su Cloud Storage è un'operazione di copia seguita da un'eliminazione, il che può risultare inefficiente e rischioso su larga scala rispetto a strumenti dedicati.
+* **B) +Corretta:** Lo **Storage Transfer Service** è la soluzione raccomandata da Google per migrazioni da altri provider cloud (come AWS S3 o Azure Blob Storage) o tramite HTTP/HTTPS. È una soluzione gestita, altamente scalabile e ottimizzata per ridurre i tempi di trasferimento e i costi operativi, eliminando la necessità di mantenere infrastrutture intermedie.
+* **C) -Errata:** Il **Transfer Appliance** è generalmente consigliato per volumi di dati molto più grandi (tipicamente dai 20-60 TB in su) o quando la larghezza di banda della rete è estremamente limitata. Per soli 10 TB, i costi logistici e i tempi di spedizione fisica superano i benefici e i costi di un trasferimento online tramite Storage Transfer Service.
+* **D) -Errata:** Scaricare i dati on-premises per poi caricarli nuovamente introduce un "doppio salto" che aumenta drasticamente i tempi di migrazione, i costi di egress del provider terzo e la complessità operativa, violando la richiesta di minimizzare tempi e costi.
+
 ---
 
 ### Question 92
@@ -1851,6 +1858,14 @@ You have a Compute Engine managed instance group that adds and removes Compute E
 - D) Modify the shutdown script to wait for 30 seconds and then publish a message to a Pub/Sub queue.
 
 > **Correct Answer:** C
+
+**Spiegazione:**
+
+* **A) Errata:** Il problema principale degli shutdown script è il limite di tempo predefinito (solitamente 90 secondi). Aggiungere un'attesa di 30 secondi ridurrebbe ulteriormente la finestra temporale per l'esecuzione dei comandi, aumentando il rischio che lo script venga terminato forzatamente prima di aver invocato la Cloud Function.
+* **B) Errata:** Un'istanza in fase di terminazione non può "riavviare" uno shutdown script se questo fallisce o scade il timeout. Una volta che il segnale di terminazione viene inviato, il ciclo di vita dell'istanza è segnato e non c'è meccanismo di retry locale che possa garantire l'affidabilità richiesta.
+* **C) +Corretta:** Questa è l'architettura più resiliente e "cloud-native". Utilizzando un **Log Sink** che filtra i log di sistema, si sposta la logica di pulizia fuori dall'istanza effimera. Quando Cloud Logging riceve il log relativo alla terminazione della VM (`compute.instances.terminate`), l'evento triggera la Cloud Function in modo asincrono. Questo garantisce l'esecuzione indipendentemente dallo stato o dai tempi di spegnimento della VM stessa.
+* **D) Errata:** Pubblicare un messaggio su Pub/Sub tramite shutdown script soffre dello stesso difetto dell'opzione A: l'affidabilità dipende dalla capacità della VM di completare correttamente una chiamata API verso l'esterno durante lo spegnimento. Se lo script viene interrotto prematuramente, il record REDIS rimarrà orfano.
+
 
 ---
 
@@ -1865,6 +1880,14 @@ You are managing several projects on Google Cloud and need to interact on a dail
 
 > **Correct Answer:** A
 
+**Spiegazione:**
+
+* **A) +Corretta:** Cloud Shell è la soluzione ideale per questo scenario. È una macchina virtuale di gestione preconfigurata con **gcloud**, **kubectl** e altri strumenti necessari (come i client per BigQuery e Bigtable) già installati e aggiornati. Essendo accessibile tramite browser da qualsiasi postazione, elimina la necessità di installazioni locali e garantisce un ambiente persistente e coerente ovunque ti trovi.
+* **B) Errata:** Sebbene risolva il problema della coerenza dell'ambiente, introduce un overhead amministrativo e costi inutili. Dovresti gestire manualmente gli aggiornamenti di gcloud, la sicurezza dell'istanza (SSH) e pagheresti per il tempo di esecuzione della VM, quando Cloud Shell offre gratuitamente le stesse funzionalità.
+* **C) Errata:** Questa opzione richiede uno sforzo manuale significativo su ogni workstation. Inoltre, il comando `gcloud components auto-update` non esiste come funzione di background; gli aggiornamenti vanno gestiti o tramite package manager o tramite comando manuale `gcloud components update`. Non risolve il problema della gestione manuale della CLI.
+* **D) Errata:** L'uso di un package manager (come `apt` o `brew`) semplifica l'installazione e l'aggiornamento rispetto a uno script manuale, ma non elimina la necessità di configurare e autenticare ogni singola workstation su cui lavori. Non è una soluzione efficiente per chi cambia frequentemente postazione di lavoro.
+
+
 ---
 
 ### Question 94
@@ -1877,6 +1900,13 @@ Your company recently acquired a company that has infrastructure in Google Cloud
 - D) Configure SSH port forwarding on each application to provide connectivity between applications in the different Shared VPCs.
 
 > **Correct Answer:** C
+
+**Spiegazione:**
+
+* **A) Errata:** Il VPC Network Peering non è fattibile in questo scenario. Uno dei requisiti fondamentali del peering è che non devono esserci intervalli IP (subnets) sovrapposti tra le reti, anche se le applicazioni specifiche che devono comunicare si trovano su subnet non sovrapposte. Il peering fallirebbe a livello di configurazione dell'intera rete.
+* **B) Errata:** Sebbene questa soluzione risolverebbe il problema alla radice, non rispetta il vincolo del "minimal re-engineering". Migrare interi progetti tra organizzazioni e rilanciare tutte le istanze in un nuovo Shared VPC è un processo complesso, lungo e soggetto a errori.
+* **C) +Corretta:** Cloud VPN è la soluzione standard per connettere reti con subnet sovrapposte. A differenza del peering, la VPN consente di stabilire un tunnel tra le reti e, tramite l'instradamento selettivo (routing statico o dinamico con BGP), è possibile instradare il traffico solo per le subnet specifiche non sovrapposte che devono effettivamente comunicare. Questo permette l'integrazione senza dover riprogettare l'intero schema IP delle due organizzazioni.
+* **D) Errata:** Il port forwarding SSH non è una soluzione di networking aziendale scalabile o sicura per la connettività tra applicazioni. Richiederebbe una gestione complessa dei tunnel per ogni servizio e non fornirebbe una vera connettività a livello di rete (Layer 3) necessaria per un'integrazione tra due aziende.
 
 ---
 
@@ -1891,6 +1921,13 @@ You are managing several internal applications that are deployed on Compute Engi
 
 > **Correct Answer:** A
 
+**Spiegazione:**
+
+* **A) +Corretta:** Come indicato dalla metodologia di troubleshooting standard (SRE), il primo passo è sempre l'osservazione. Prima di apportare modifiche distruttive o costose, è fondamentale analizzare i dati. **Cloud Monitoring** ti permette di verificare l'utilizzo di CPU, memoria e latenza di rete, mentre **Cloud Logging** può rivelare errori applicativi o di sistema che spiegano il rallentamento. Solo con i dati alla mano puoi identificare se il collo di bottiglia è l'infrastruttura, il codice o il database.
+* **B) Errata:** Aumentare le risorse (scaling verticale) senza un'analisi preventiva è un approccio per tentativi che potrebbe non risolvere il problema. Se il rallentamento è causato da un deadlock nel database o da un errore nel codice, aggiungere CPU e memoria aumenterebbe solo i costi senza migliorare le prestazioni.
+* **C) Errata:** Ripristinare un backup è un'operazione drastica che comporta la perdita di dati recenti. Deve essere utilizzata come ultima risorsa in caso di corruzione dei dati, non come primo passo diagnostico per un problema di latenza.
+* **D) Errata:** Sebbene l'autoscaling e il Load Balancing siano best practice per la scalabilità e l'alta affidabilità, implementarli in questo momento rappresenta un "re-engineering" prematuro. Se l'applicazione ha un bug latente o un problema di configurazione, spostarla in un Managed Instance Group non risolverà la causa radice del rallentamento.
+
 ---
 
 ### Question 96
@@ -1903,6 +1940,13 @@ Your company has an application running as a Deployment in a Google Kubernetes E
 - D) Configure an uptime alert in Cloud Monitoring.
 
 > **Correct Answer:** A
+
+**Spiegazione:**
+
+* **A) +Corretta:** Le **Readiness Probes** sono lo strumento nativo di Kubernetes progettato esattamente per questo scenario. Se una nuova versione ha parametri di produzione errati (ad esempio, una stringa di connessione al database sbagliata), l'applicazione fallirà il controllo di "readiness". Durante una **rolling update**, GKE non instraderà il traffico verso i nuovi Pod malfunzionanti e non spegnerà i vecchi Pod finché i nuovi non saranno pronti, bloccando di fatto il rollout ed evitando il disservizio. Le **Liveness Probes**, invece, riavvieranno i Pod se questi smettono di rispondere durante il ciclo di vita.
+* **B) Errata:** I health check del Managed Instance Group (MIG) operano a livello di infrastruttura (nodo VM). GKE gestisce i nodi tramite i MIG, ma un errore di configurazione dei parametri applicativi dentro un container non verrebbe rilevato da un health check che controlla solo se la VM è attiva o se il servizio Kubelet sta rispondendo.
+* **C) Errata:** Un task pianificato (come un CronJob) agisce "dopo il fatto". Potrebbe avvisarti che l'applicazione è offline, ma non è una misura preventiva integrata nel processo di deployment che può bloccare il rilascio di una versione malconfigurata.
+* **D) Errata:** Simile alla risposta C, un alert di uptime in Cloud Monitoring è uno strumento di monitoraggio reattivo. Ti informa quando l'applicazione è già in stato di outage (ovvero quando l'utente sta già riscontrando il problema), ma non impedisce a una rolling update difettosa di sostituire i Pod funzionanti.
 
 ---
 
@@ -1917,6 +1961,13 @@ Your company uses Google Kubernetes Engine (GKE) as a platform for all workloads
 
 > **Correct Answer:** C
 
+**Spiegazione:**
+
+* **A) Errata:** Creare un secondo cluster e suddividere i nodi non riduce i costi complessivi; al contrario, aumenta l'overhead di gestione e il consumo di risorse per i componenti del piano di controllo (se non si usa l'Autopilot) e i servizi di sistema necessari per ogni cluster.
+* **B) Errata:** Impostare limiti e quote a livello di namespace aiuta a prevenire che un carico di lavoro "divori" tutte le risorse (evitando l'effetto noisy neighbor), ma non riduce automaticamente il numero di nodi attivi o il costo dell'infrastruttura sottostante.
+* **C) +Corretta:** Questa è la combinazione vincente per l'ottimizzazione dei costi senza sacrificare l'affidabilità. L'**HorizontalPodAutoscaler (HPA)** regola dinamicamente il numero di repliche dei Pod in base alla domanda effettiva. Abbinandolo al **Cluster Autoscaler**, GKE rimuoverà automaticamente i nodi che diventano inutilizzati a causa della riduzione dei Pod, permettendo di pagare solo per le risorse effettivamente necessarie in ogni momento.
+* **D) Errata:** Sebbene le VM Preemptible (o Spot) offrano sconti significativi, utilizzarle per l'intero node pool di un cluster che ospita carichi **stateful** comprometterebbe gravemente la disponibilità. Le istanze Spot possono essere terminate con un preavviso di soli 30 secondi, il che non è ideale per database o carichi di lavoro critici che non sono progettati per interruzioni frequenti.
+
 ---
 
 ### Question 98
@@ -1930,13 +1981,18 @@ Your company has a Google Cloud project that uses BigQuery for data warehousing 
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A) Errata:** Le etichette (labels) sui dataset o sulle tabelle servono a categorizzare le risorse, ma non vengono propagate automaticamente ai singoli job di query per identificare chi le ha eseguite nel report di fatturazione. Inoltre, il report di fatturazione standard ha una latenza significativa e non permette un monitoraggio in "tempo reale".
+* **B) +Corretta:** Questa è la soluzione standard per il monitoraggio granulare. I **Data Access Logs** di BigQuery contengono metadati dettagliati per ogni query, inclusi l'identità dell'utente (`principalEmail`) e le statistiche di utilizzo (come `totalSlotMs` e `totalBilledBytes`). Esportando questi log in tempo reale verso un dataset BigQuery tramite un **Log Sink**, è possibile interrogare immediatamente i dati per identificare query costose e utenti specifici con una latenza di pochi secondi/minuti.
+* **C) Errata:** Sebbene tecnicamente possibile, questa soluzione è inutilmente complessa ("over-engineered"). Introdurre Cloud Storage e un job Dataflow aggiunge costi, latenza e necessità di manutenzione del codice quando BigQuery può analizzare i log direttamente in modo molto più efficiente.
+* **D) Errata:** L'esportazione della fatturazione (Billing Export) verso BigQuery è fondamentale per l'analisi dei costi a lungo termine, ma non è in tempo reale. I dati di fatturazione possono avere un ritardo che va dalle 6 alle 24 ore, rendendo impossibile scoprire le query costose nel momento esatto in cui vengono eseguite.
+
 ---
 
 ### Question 99
 
-Your company and one of its partners each have a Google Cloud project in separate organizations. Your company's project (prj-a) runs in Virtual Private Cloud
-
-(vpc-a). The partner's project (prj-b) runs in vpc-b. There are two instances running on vpc-a and one instance running on vpc-b. Subnets defined in both VPCs are not overlapping. You need to ensure that all instances communicate with each other via internal IPs, minimizing latency and maximizing throughput. What should you do?
+Your company and one of its partners each have a Google Cloud project in separate organizations. Your company's project (prj-a) runs in Virtual Private Cloud (vpc-a). The partner's project (prj-b) runs in vpc-b. There are two instances running on vpc-a and one instance running on vpc-b. Subnets defined in both VPCs are not overlapping. You need to ensure that all instances communicate with each other via internal IPs, minimizing latency and maximizing throughput. What should you do?
 
 - A) Set up a network peering between vpc-a and vpc-b.
 - B) Set up a VPN between vpc-a and vpc-b using Cloud VPN.
@@ -1944,6 +2000,13 @@ Your company and one of its partners each have a Google Cloud project in separat
 - D) 1. Create an additional instance in vpc-a. 2. Create an additional instance in vpc-b. 3. Install OpenVPN in newly created instances. 4. Configure a VPN tunnel between vpc-a and vpc-b with the help of OpenVPN.
 
 > **Correct Answer:** A
+
+**Spiegazione:**
+
+* **A) +Corretta:** Il **VPC Network Peering** è la soluzione ottimale perché permette la comunicazione tra reti VPC diverse (anche in organizzazioni differenti) utilizzando l'infrastruttura interna di Google. Soddisfa i requisiti di **minima latenza** e **massimo throughput** poiché il traffico rimane all'interno della rete SDN di Google senza passare per gateway VPN o per l'internet pubblica. Inoltre, la mancanza di sovrapposizione delle subnet è un prerequisito fondamentale per il peering.
+* **B) Errata:** Cloud VPN introduce un overhead di incapsulamento che aumenta la latenza e limita il throughput alla capacità dei tunnel (tipicamente 3 Gbps per tunnel). Rispetto al peering, è meno efficiente per comunicazioni puramente interne a GCP.
+* **C) Errata:** IAP TCP Forwarding è progettato per l'accesso amministrativo remoto (SSH/RDP) tramite tunnel HTTPS, non per la comunicazione diretta tra istanze tra VPC. Non garantisce throughput elevato ed è tecnicamente inadeguato per il networking inter-VPC su IP interni.
+* **D) Errata:** L'uso di istanze self-managed con OpenVPN introduce un "single point of failure", aumenta la complessità operativa e degrada drasticamente le prestazioni rispetto alle soluzioni native di Google Cloud, non rispettando i criteri di latenza e throughput richiesti.
 
 ---
 
@@ -1958,13 +2021,18 @@ You want to store critical business information in Cloud Storage buckets. The in
 
 > **Correct Answer:** B
 
+**Spiegazione:**
+
+* **A) Errata:** Bucket Lock viene utilizzato per applicare policy di conservazione (Retention Policy) che impediscono l'eliminazione o la modifica dei dati per un periodo specifico. Sebbene protegga dai cambiamenti, non permette di referenziare le versioni precedenti né di gestire "modifiche regolari" con facilità, poiché il suo scopo è l'immutabilità e la compliance (WORM).
+* **B) +Corretta:** **Object Versioning** è la funzionalità specifica di Cloud Storage che mantiene una cronologia delle versioni degli oggetti. Quando viene abilitata, ogni modifica o sovrascrittura crea una nuova versione, consentendo di referenziare i dati precedenti e di recuperare facilmente oggetti in caso di eliminazioni accidentali o sovrascritture errate, soddisfacendo pienamente tutti i requisiti della domanda.
+* **C) Errata:** Object Change Notification invia una notifica (tipicamente tramite Cloud Pub/Sub o webhook) quando un oggetto viene creato, aggiornato o rimosso. È uno strumento di monitoraggio e automazione, ma non fornisce di per sé un meccanismo per conservare o ripristinare le versioni precedenti dei dati.
+* **D) Errata:** Object Lifecycle Management viene utilizzato per automatizzare la transizione degli oggetti verso classi di storage più economiche (come da Standard a Coldline) o per eliminare oggetti dopo un certo periodo. Sebbene possa interagire con il versionamento (ad esempio eliminando le versioni non correnti dopo X giorni), non è la funzionalità che abilita la conservazione delle versioni per il rollback.
+
 ---
 
 ### Question 101
 
-The database administration team has asked you to help them improve the performance of their new database server running on Google Compute Engine. The database is for importing and normalizing their performance statistics and is built with MySQL running on Debian Linux. They have an n1-standard-8 virtual machine with 80 GB of SSD persistent disk.
-
-What should they change to get better performance from this system?
+The database administration team has asked you to help them improve the performance of their new database server running on Google Compute Engine. The database is for importing and normalizing their performance statistics and is built with MySQL running on Debian Linux. They have an n1-standard-8 virtual machine with 80 GB of SSD persistent disk. What should they change to get better performance from this system?
 
 - A) Increase the virtual machine's memory to 64 GB
 - B) Create a new virtual machine running PostgreSQL
@@ -1974,21 +2042,19 @@ What should they change to get better performance from this system?
 
 > **Correct Answer:** C
 
+**Spiegazione:**
+
+* **A) Errata:** Sebbene aumentare la memoria possa aiutare con il caching dei dati (come l'innodb_buffer_pool in MySQL), le performance di I/O in Google Cloud sono direttamente legate alla dimensione del disco. Con soli 80 GB, il collo di bottiglia principale è il throughput e gli IOPS del disco, non la RAM.
+* **B) Errata:** Cambiare il database engine da MySQL a PostgreSQL potrebbe offrire diverse funzionalità o ottimizzazioni software, ma non risolve il limite prestazionale infrastrutturale legato al throughput del disco persistente su GCP.
+* **C) +Corretta:** In Google Cloud, le performance dei **Persistent Disk (PD)** scalano linearmente con la dimensione del disco fino a raggiungere i limiti della macchina virtuale. Un disco SSD da 80 GB ha limiti di IOPS e throughput molto bassi. Aumentando la dimensione a **500 GB**, si incrementano proporzionalmente i limiti di lettura/scrittura, migliorando drasticamente le performance del database MySQL senza dover migrare i dati.
+* **D) Errata:** Sebbene BigQuery sia eccellente per il data warehousing e l'analisi di grandi volumi di dati, la domanda chiede come migliorare le performance del "server database esistente" (MySQL su GCE). La migrazione a BigQuery comporterebbe una riarchitettura completa che va oltre l'ottimizzazione del sistema attuale.
+* **E) Errata:** L'uso di insert massivi (bulk inserts) può ottimizzare il modo in cui l'applicazione scrive i dati, ma se il sottostante disco SSD è limitato a livello di throughput a causa della sua piccola dimensione (80 GB), le operazioni di scrittura rimarranno comunque strozzate a livello infrastrutturale.
+
 ---
 
 ### Question 102
 
-You have a Compute Engine application that you want to autoscale when total memory usage exceeds 80%. You have installed the Cloud Monitoring agent and configured the autoscaling policy as follows:
-
-✑ Metric identifier: agent.googleapis.com/memory/percent_used
-
-✑ Filter: metric.label.state = 'used'
-
-✑ Target utilization level: 80
-
-✑ Target type: GAUGE
-
-You observe that the application does not scale under high load. You want to resolve this. What should you do?
+You have a Compute Engine application that you want to autoscale when total memory usage exceeds 80%. You have installed the Cloud Monitoring agent and configured the autoscaling policy as follows: - Metric identifier: agent.googleapis.com/memory/percent_used; - Filter: metric.label.state = 'used'; - Target utilization level: 80; - Target type: GAUGE. You observe that the application does not scale under high load. You want to resolve this. What should you do?
 
 - A) Change the Target type to DELTA_PER_MINUTE.
 - B) Change the Metric identifier to agent.googleapis.com/memory/bytes_used.
@@ -1996,6 +2062,13 @@ You observe that the application does not scale under high load. You want to res
 - D) Change the filter to metric.label.state = 'free' and the Target utilization to 20.
 
 > **Correct Answer:** C
+
+**Spiegazione:**
+
+* **A) Errata:** Il target type `DELTA_PER_MINUTE` si usa per metriche cumulative che misurano variazioni nel tempo (come il numero di richieste). La memoria è una metrica di stato puntuale, quindi `GAUGE` è l'impostazione corretta.
+* **B) Errata:** Cambiare l'identificatore in `bytes_used` non risolverebbe il problema del calcolo della percentuale e renderebbe difficile impostare un target di utilizzo fisso (80), poiché la soglia in byte cambierebbe a seconda della RAM totale dell'istanza.
+* **C) +Corretta:** La metrica `agent.googleapis.com/memory/percent_used` è suddivisa in vari stati tramite label. Se si filtra solo per `state = 'used'`, l'autoscaler ignora la memoria utilizzata per **buffer**, **cache** e **slab** (strutture dati del kernel), che in Linux rappresentano spesso una fetta significativa della memoria occupata. Includendo questi stati nel filtro, l'autoscaler otterrà una visione realistica del consumo totale di memoria, attivando correttamente la scalabilità quando il carico aumenta.
+* **D) Errata:** Cambiare il filtro per monitorare la memoria `free` con un target del 20% potrebbe teoricamente funzionare come logica inversa, ma non è la best practice raccomandata per l'autoscaling basato sull'agente Monitoring e non risolverebbe il problema della corretta classificazione della memoria "occupata" (cache/buffer).
 
 ---
 
